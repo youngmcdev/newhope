@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="bg-light p-3 rounded">
+        <div class="">
+        <h1>Welcome {{user.username}}</h1>
+        <p class="lead nh-body"></p>
+        <p class="lead nh-button" style="display:none;">
+            <a href="#" class="btn btn-lg btn-primary" role="button">Learn More</a>
+            <a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" style="display:none;">Learn more</a>
+        </p>
+        </div>
+    </div>
+{% endblock %}
