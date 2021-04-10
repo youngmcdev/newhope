@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <title>{{ title }}</title>
+    <title>{{ model.title }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 
@@ -30,7 +30,7 @@
         body {
             min-height: 75rem;
             padding-top: 4.5rem;
-            text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+            /* text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5); */
             box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
         }
 
@@ -69,7 +69,7 @@
 <body>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container-fluid">
-            <a id="home-icon" class="navbar-brand" href="#">{{ title }}</a>
+            <a id="home-icon" class="navbar-brand" href="{{ url_for('index') }}">{{ model.title }}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -77,22 +77,22 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link active" data-id="home" href="#">Home</a>
+                        <a class="nav-link" data-id="index" href="{{ url_for('index') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-id="services" href="#">When We Meet</a>
+                        <a class="nav-link" data-id="services" href="{{ url_for('services') }}">When We Meet</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-id="introduction" href="#">Introduction</a>
+                        <a class="nav-link" data-id="introduction" href="{{ url_for('introduction') }}">Introduction</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-id="sermons" href="#">Sermons</a>
+                        <a class="nav-link" data-id="messages" href="{{ url_for('messages') }}">Messages</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-id="events" href="#">Events</a>
+                        <a class="nav-link" data-id="events" href="{{ url_for('events') }}">Events</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-id="donate" href="#">Donate</a>
+                        <a class="nav-link" data-id="donate" href="{{ url_for('donate') }}">Donate</a>
                     </li>
                 </ul>
             </div>
@@ -117,70 +117,42 @@
     $(document).ready(function () {
         var titleElement = $('main h1');
         var bodyElement = $('main p.nh-body');
-        var homeText = "Give ear to my words, Yahweh. Consider my meditation. Listen to the voice of my cry, my King and my God; for to you do I pray. Yahweh, in the morning you shall hear my voice. In the morning I will lay my requests before you, and will watch expectantly. For you are not a God who has pleasure in wickedness. Evil can't live with you. The arrogant shall not stand in your sight. You hate all workers of iniquity. You will destroy those who speak lies. Yahweh abhors the bloodthirsty and deceitful man. But as for me, in the abundance of your loving kindness I will come into your house. I will bow toward your holy temple in reverence of you. Lead me, Yahweh, in your righteousness because of my enemies. Make your way straight before my face. For there is no faithfulness in their mouth. Their heart is destruction. Their throat is an open tomb. They flatter with their tongue. Hold them guilty, God. Let them fall by their own counsels; Thrust them out in the multitude of their transgressions, for they have rebelled against you. But let all those who take refuge in you rejoice, Let them always shout for joy, because you defend them. Let them also who love your name be joyful in you. For you will bless the righteous. Yahweh, you will surround him with favor as with a shield.";
-        var sermonList = `<div>
-    <ul>{% for sermon in sermons %}
-        <li>{{ sermon.title }}<div>{{ sermon.description }}</div></li>
-        {% endfor %}
-    </ul>
-</div>`;
-        var contribute=`<div>
-    <form>
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="$0.00">
-            <button type="button" class="btn btn-primary">Contribute</button>
-        </div>
-    </form>
-</div>`;
-        $('main p.nh-body').html(homeText);
+        var buttonElement = $('main p.nh-button');
+        var toggler = $('button.navbar-toggler');
+        var links = $('.nav-link');
+        var requestEndpoint = '{{ request.url_rule.endpoint }}';
+        var currentMenuItem = $('ul.navbar-nav li a[data-id="' + requestEndpoint + '"]');
 
-        $('a.nav-link').on('click', function(obj){
-            var links = $('.nav-link');
-            var currentLink = $(obj.target);
-            var linkId = currentLink.data('id');
-            var buttonElement = $('main p.nh-button');
-            var toggler = $('button.navbar-toggler');
-            links.removeClass('active');
-            currentLink.addClass('active');
+        links.removeClass('active');
+        currentMenuItem.addClass('active');
+        //console.log(requestEndpoint);
 
-            switch(linkId){
+        switch(requestEndpoint){
                 case 'services':
-                    titleElement.html('When And Where To Find Us');
-                    bodyElement.html("Why do the nations rage, and the peoples plot a vain thing? The kings of the earth take a stand, and the rulers take counsel together, against Yahweh, and against his Anointed, saying, Let's break their bonds apart, and cast their cords from us. He who sits in the heavens will laugh. The LORD will have them in derision. Then he will speak to them in his anger, and terrify them in his wrath: Yet I have set my King on my holy hill of Zion. I will tell of the decree. Yahweh said to me, You are my son. Today I have become your father. Ask of me, and I will give the nations for your inheritance, the uttermost parts of the earth for your possession. You shall break them with a rod of iron. You shall dash them in pieces like a potter's vessel. Now therefore be wise, you kings. Be instructed, you judges of the earth. Serve Yahweh with fear, and rejoice with trembling. Give sincere homage to the Son, lest he be angry, and you perish in the way, for his wrath will soon be kindled. Blessed are all those who take refuge in him.");
-                    buttonElement.hide();
                     break;
                 case 'introduction':
-                    titleElement.html('More About Us');
-                    bodyElement.html("<p>Blessed is the man who doesn't walk in the counsel of the wicked, nor stand in the way of sinners, nor sit in the seat of scoffers; but his delight is in Yahweh's law. On his law he meditates day and night. He will be like a tree planted by the streams of water, that brings forth its fruit in its season, whose leaf also does not wither. Whatever he does shall prosper. The wicked are not so, but are like the chaff which the wind drives away. Therefore the wicked shall not stand in the judgment, nor sinners in the congregation of the righteous. For Yahweh knows the way of the righteous, but the way of the wicked shall perish.</p><p>Yahweh, how my adversaries have increased! Many are those who rise up against me. Many there are who say of my soul, There is no help for him in God. But you, Yahweh, are a shield around me, my glory, and the one who lifts up my head. I cry to Yahweh with my voice, and he answers me out of his holy hill. I laid myself down and slept. I awakened; for Yahweh sustains me. I will not be afraid of tens of thousands of people who have set themselves against me on every side. Arise, Yahweh! Save me, my God! For you have struck all of my enemies on the cheek bone. You have broken the teeth of the wicked. Salvation belongs to Yahweh. Your blessing be on your people.</p><p>Answer me when I call, God of my righteousness. Give me relief from my distress. Have mercy on me, and hear my prayer. You sons of men, how long shall my glory be turned into dishonor? Will you love vanity, and seek after falsehood? But know that Yahweh has set apart for himself him who is godly: Yahweh will hear when I call to him. Stand in awe, and don't sin. Search your own heart on your bed, and be still. Offer the sacrifices of righteousness. Put your trust in Yahweh. Many say, Who will show us any good? Yahweh, let the light of your face shine on us. You have put gladness in my heart, more than when their grain and their new wine are increased. In peace I will both lay myself down and sleep, for you, Yahweh alone, make me live in safety.</p>");
-                    buttonElement.hide();
                     break;
                 case 'sermons':
-                    titleElement.html('Recent Sermons');
-                    bodyElement.html(sermonList);
                     break;
                 case 'events':
-                    titleElement.html('Events On Our Calendar');
-                    bodyElement.html("Yahweh, don't rebuke me in your anger, neither discipline me in your wrath. Have mercy on me, Yahweh, for I am faint. Yahweh, heal me, for my bones are troubled. My soul is also in great anguish. But you, Yahweh—how long? Return, Yahweh. Deliver my soul, and save me for your loving kindness' sake. For in death there is no memory of you. In Sheol, who shall give you thanks? I am weary with my groaning. Every night I flood my bed. I drench my couch with my tears. My eye wastes away because of grief. It grows old because of all my adversaries. Depart from me, all you workers of iniquity, for Yahweh has heard the voice of my weeping. Yahweh has heard my supplication. Yahweh accepts my prayer. May all my enemies be ashamed and dismayed. They shall turn back, they shall be disgraced suddenly.");
                     break;
                 case 'donate':
-                    titleElement.html('Donate');
-                    bodyElement.html("My God, how majestic is your name in all the earth, who has set your glory above the heavens! From the lips of babes and infants you have established strength, because of your adversaries, that you might silence the enemy and the avenger. When I consider your heavens, the work of your fingers, the moon and the stars, which you have ordained; what is man, that you think of him? What is the son of man, that you care for him? For you have made him a little lower than God, and crowned him with glory and honor. You make him ruler over the works of your hands. You have put all things under his feet: All sheep and cattle, yes, and the animals of the field, The birds of the sky, the fish of the sea, and whatever passes through the paths of the seas. Yahweh, our LORD, how majestic is your name in all the earth!" + contribute);
                     break;
                 default:
-                    titleElement.html('Welcome');
-                    bodyElement.html(homeText);
-                    buttonElement.hide();
                     break;
             }
-            //toggler.click();
-            $('.navbar-collapse').collapse('hide');
-        });
 
-        $('#home-icon').on('click', function(obj){
-            titleElement.html('Welcome');
-            bodyElement.html(homeText);
+        $('a.nav-link').on('click', function(obj){
+            //toggler.click();
+            var targetUrl = $(obj.target).attr('href');
+            $('.navbar-collapse').collapse('hide');
+            
+            if($('nav.navbar button.navbar-toggler').is(':visible')){
+                setTimeout(function(){location.href = targetUrl}, 200);
+                return false;
+            }
         });
     });
 </script>
-
+{% block scripts %}{% endblock %}
 </html>
