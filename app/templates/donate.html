@@ -5,10 +5,19 @@
     <h1>Donate</h1>
     <p class="nh-body">My God, how majestic is your name in all the earth, who has set your glory above the heavens! From the lips of babes and infants you have established strength, because of your adversaries, that you might silence the enemy and the avenger. When I consider your heavens, the work of your fingers, the moon and the stars, which you have ordained; what is man, that you think of him? What is the son of man, that you care for him? For you have made him a little lower than God, and crowned him with glory and honor. You make him ruler over the works of your hands. You have put all things under his feet: All sheep and cattle, yes, and the animals of the field, The birds of the sky, the fish of the sea, and whatever passes through the paths of the seas. Yahweh, our LORD, how majestic is your name in all the earth!</p>
     <div>
-        <form>
-            <div class="input-group">
+        <form id="payment-form">
+            <div id="card-element"></div>
+            <button id="submit">
+                <div class="spinner hidden" id="spinner"></div>
+                <span id="button-text">Pay Now</span>
+            </button>
+            <p id="card-error" role="alert"></p>
+            <p class="result-message hidden">
+                Payment succeeded, see the result in your <a href="" target="_blank">Stripe dashboard.</a> Refresh the page to pay again.
+            </p>
+            <div class="input-group" style="display: none;">
                 <input type="text" class="form-control" placeholder="$0.00">
-                <button type="button" class="btn btn-primary">Contribute</button>
+                <button type="button" id="contribute-btn" class="btn btn-primary">Contribute</button>
             </div>
         </form>
     </div>
@@ -21,7 +30,144 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://js.stripe.com/v3/"></script>
 <script>
+    // A reference to Stripe.js initialized with test publishable API key. Use Stripe.js to create the card input field and complete the payment on the client.
+    var stripe = Stripe("pk_test_51IYdpzKkHVDoGTuCRaJG0e95sP0DTMeSpbU8jtUimopXdeKa9p1XwSHQXCDIjW5mzz4DmsjQghgR0rxYOTCTDYqF001MpBxf9m");
+
+    // The items the customer wants to buy
+    var purchase = {
+        items: [{ id: "xl-tshirt" }]
+    };
+
+    // Disable the button until we have Stripe set up on the page
+    document.querySelector("button").disabled = true;
+
+    // Make a request to the endpoint on the server to create a new PaymentIntent as soon as the page loads.
+    fetch("/create-payment-intent", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(purchase)
+    })
+        .then(function(result) {
+            return result.json();
+        })
+        .then(function(data) {
+            // Initialize the Stripe Elements UI library. Elements manages the UI components you need to collect card details.
+            var elements = stripe.elements();
+
+            var style = {
+                base: {
+                    color: "#32325d",
+                    fontFamily: 'Arial, sans-serif',
+                    fontSmoothing: "antialiased",
+                    fontSize: "16px",
+                    "::placeholder": {
+                        color: "#32325d"
+                    }
+                },
+                invalid: {
+                    fontFamily: 'Arial, sans-serif',
+                    color: "#fa755a",
+                    iconColor: "#fa755a"
+                }
+            };
+
+            /* Create a Card Element and mount it to the placeholder <div> in the payment form. This creates a single input that 
+                collects the card number, expiry date, CVC, and postal code. Elements displays localized placeholder text of the 
+                postal code field based on the user's browser locale (e.g. showing "ZIP" for U.S. cardholders, "Postcode" 
+                for U.K. cardholders). */
+            var card = elements.create("card", { style: style });
+            // Stripe injects an iframe into the DOM
+            card.mount("#card-element");
+
+            // Listen to changes on the Card Element to immediately surface card errors (e.g. expiry date in the past) and disable the button if the Element is empty.
+            card.on("change", function (event) {
+                // Disable the Pay button if there are no card details in the Element
+                document.querySelector("button").disabled = event.empty;
+                document.querySelector("#card-error").textContent = event.error ? event.error.message : "";
+            });
+
+            // Listen to the form's submit event to know when to confirm the payment through the Stripe API.
+            var form = document.getElementById("payment-form");
+            form.addEventListener("submit", function(event) {
+                console.log('Attempt to submit payment')
+                event.preventDefault();
+                // Complete payment when the submit button is clicked
+                // payWithCard(stripe, card, data.clientSecret); // MCY - commented out
+            });
+        });
+
+    // Calls stripe.confirmCardPayment
+    // If the card requires authentication Stripe shows a pop-up modal to
+    // prompt the user to enter authentication details without leaving your page.
+    var payWithCard = function(stripe, card, clientSecret) {
+    loading(true);
+
+    /* Call confirmCardPayment() passing along the client secret and Card Element, to complete the payment. 
+    Stripe automatically displays a modal if the card requires authentication like 3D Secure, where the 
+    customer must enter a passcode or other piece of identifying information to finalize the purchase. */
+    stripe
+        .confirmCardPayment(clientSecret, {
+            payment_method: {
+                card: card
+            }
+        })
+        .then(function(result) {
+            /* If no error occurred, tell your customer the payment was successful! For any important post-payment 
+            actions (such as shipping packages, sending email receipts) we recommend setting up a webhook. If your 
+            customer’s card is declined, Stripe.js returns an error. Show that error message to your customer so 
+            they can try again with a different card*/
+            if (result.error) {
+                // Show error to your customer
+                showError(result.error.message);
+            } else {
+                // The payment succeeded!
+                orderComplete(result.paymentIntent.id);
+            }
+        });
+    };
+
+    /* ------- UI helpers ------- */
+
+    // Shows a success message when the payment is complete
+    var orderComplete = function(paymentIntentId) {
+        loading(false);
+        document
+            .querySelector(".result-message a")
+            .setAttribute(
+                "href",
+                "https://dashboard.stripe.com/test/payments/" + paymentIntentId
+            );
+        document.querySelector(".result-message").classList.remove("hidden");
+        document.querySelector("button").disabled = true;
+    };
+
+    // Show the customer the error from Stripe if their card fails to charge
+    var showError = function(errorMsgText) {
+        loading(false);
+        var errorMsg = document.querySelector("#card-error");
+        errorMsg.textContent = errorMsgText;
+        setTimeout(function() {
+            errorMsg.textContent = "";
+        }, 4000);
+    };
+
+    // Show a spinner on payment submission
+    var loading = function(isLoading) {
+        if (isLoading) {
+            // Disable the button and show a spinner
+            document.querySelector("button").disabled = true;
+            document.querySelector("#spinner").classList.remove("hidden");
+            document.querySelector("#button-text").classList.add("hidden");
+        } else {
+            document.querySelector("button").disabled = false;
+            document.querySelector("#spinner").classList.add("hidden");
+            document.querySelector("#button-text").classList.remove("hidden");
+        }
+    };
 
 </script>
 {% endblock %}

@@ -1,12 +1,26 @@
-from flask import render_template
+import json
+import os
+import stripe
+from flask import Flask, render_template, jsonify, request
 from app import app
 from datetime import datetime, date, time
-# To start the application:
+
+# If you've just cloned the repo
+# 1) Execute "python -m venv venv" to set up the virtual environment
+# 2) Activate the environment by executing "venv\Scripts\activate"
+# 3) Install Flask via "pip install flask"
+# 4) Install Stripe via "pip install --upgrade stripe"
+# 5) If the files .env or .flaskenv are being used, then execute "pip install python-dotenv"
+# 6) Execute "flask run"
+
+# To start the application (assuming the environment has been setup after cloning the repo):
 # 1) Open a command console and change directory to the root of the application/repository
 # 2) Activate the environment by executing "venv\Scripts\activate"
 # 3) Set the FLASK_APP environment variable "set FLASK_APP=<name_of_python_file>" example "set FLASK_APP=newhope.py"
 #        Note: This is being done via the .flaskenv file
 # 4) Execute "flask run"
+
+stripe.api_key = ""
 
 class PageTemplate:
     def __init__(self):
@@ -52,3 +66,24 @@ def messages():
 def services():
     pageModel = PageTemplate()
     return render_template('services.html', model=pageModel)
+
+@app.route('/create-payment-intent', methods=['POST'])
+def create_payment():
+    try:
+        data = json.loads(request.data)
+        intent = stripe.PaymentIntent.create(
+            amount=calculate_order_amount(data['items']),
+            currency='usd'
+        )
+
+        return jsonify({
+            'clientSecret': intent['client_secret']
+        })
+    except Exception as e:
+        return jsonify(error=str(e)), 403
+
+def calculate_order_amount(items):
+    # Replace this constant with a calculation of the order's amount
+    # Calculate the order total on the server to prevent
+    # people from directly manipulating the amount on the client
+    return 21.12

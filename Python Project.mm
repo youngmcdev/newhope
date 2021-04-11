@@ -97,6 +97,9 @@
 <node TEXT="Should get no errors" ID="ID_1152284822" CREATED="1617225447362" MODIFIED="1617225451869"/>
 </node>
 </node>
+<node TEXT="Command to install Stripe in the virtual environment" ID="ID_1587192533" CREATED="1618143313015" MODIFIED="1618143332627">
+<node TEXT="pip install --upgrade stripe" ID="ID_58769164" CREATED="1618145687959" MODIFIED="1618145690018"/>
+</node>
 </node>
 </node>
 <node TEXT="Create application" POSITION="right" ID="ID_1583674960" CREATED="1617227487671" MODIFIED="1617227495570">
