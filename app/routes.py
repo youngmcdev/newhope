@@ -1,7 +1,7 @@
 import json
 import os
 import stripe
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, url_for, render_template, jsonify, request
 from app import app
 from datetime import datetime, date, time
 
@@ -40,32 +40,63 @@ def index():
     #     {'title':'Title Three', 'image':'', 'url':'', 'description':'Diam sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Orci nulla pellentesque dignissim enim sit amet venenatis urna cursus. Cum sociis natoque penatibus et magnis dis parturient. Eget magna fermentum iaculis eu non diam.'}
     #     ]
     pageModel = PageTemplate()
-    return render_template('index.html', model=pageModel)
+    return render_template('index.html', model = pageModel)
 
 @app.route('/donate')
 def donate():
     pageModel = PageTemplate()
-    return render_template('donate.html', model=pageModel)
+    return render_template('donate.html', model = pageModel)
 
 @app.route('/events')
 def events():
     pageModel = PageTemplate()
-    return render_template('events.html', model=pageModel)
+    return render_template('events.html', model = pageModel)
 
 @app.route('/introduction')
 def introduction():
     pageModel = PageTemplate()
-    return render_template('introduction.html', model=pageModel)
+    return render_template('introduction.html', model = pageModel)
 
 @app.route('/messages')
 def messages():
     pageModel = PageTemplate()
-    return render_template('messages.html', model=pageModel)
+    return render_template('messages.html', model = pageModel)
 
 @app.route('/services')
 def services():
     pageModel = PageTemplate()
-    return render_template('services.html', model=pageModel)
+    return render_template('services.html', model = pageModel)
+
+@app.route('/create-checkout-session', methods = ['POST'])
+def create_checkout_session():
+    session = stripe.checkout.Session.create(
+        payment_method_types = ['card'],
+        line_items = [{
+            'price_data': {
+                'currency': 'usd',
+                'product_data': {
+                    'name': 'Donation'
+                },
+                'unit_amount': 50.00
+            },
+            'quantity': 1
+        }],
+        mode = 'payment',
+        success_url = url_for('checkout_success', _external = True),
+        cancel_url = url_for('checkout_cancel', _external = True)
+    )
+
+    return jsonify(id = session.id)
+
+@app.route('/checkout-success')
+def checkout_success():
+    pageModel = PageTemplate()
+    return render_template('success.html', model = pageModel)
+
+@app.route('/checkout-cancel')
+def checkout_cancel():
+    pageModel = PageTemplate()
+    return render_template('cancel.html', model = pageModel)
 
 @app.route('/create-payment-intent', methods=['POST'])
 def create_payment():

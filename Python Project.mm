@@ -63,7 +63,7 @@
 </stylenode>
 </map_styles>
 </hook>
-<hook NAME="AutomaticEdgeColor" COUNTER="5" RULE="ON_BRANCH_CREATION"/>
+<hook NAME="AutomaticEdgeColor" COUNTER="6" RULE="ON_BRANCH_CREATION"/>
 <node TEXT="Help" POSITION="right" ID="ID_266016219" CREATED="1617228196120" MODIFIED="1617228199995">
 <edge COLOR="#dd0000"/>
 <node TEXT="Using the tutorial at" ID="ID_795589106" CREATED="1617227405007" MODIFIED="1617228202790">
@@ -122,6 +122,18 @@
 </node>
 <node TEXT="Command to run the application" ID="ID_1313929014" CREATED="1617227671487" MODIFIED="1617227677827">
 <node TEXT="flask run" ID="ID_356440155" CREATED="1617227678030" MODIFIED="1617227682625"/>
+</node>
+</node>
+<node TEXT="Stripe" POSITION="left" ID="ID_1098002789" CREATED="1618190064617" MODIFIED="1618190069133">
+<edge COLOR="#7cdddd"/>
+<node TEXT="Tutorials done" ID="ID_889033236" CREATED="1618190071136" MODIFIED="1618190079059">
+<node TEXT="https://stripe.com/docs/payments/integration-builder" ID="ID_1818255293" CREATED="1618190134217" MODIFIED="1618190155515">
+<icon BUILTIN="button_ok"/>
+</node>
+<node TEXT="https://stripe.com/docs/payments/accept-a-payment?ui=checkout" ID="ID_1105257330" CREATED="1618190096612" MODIFIED="1618190104765">
+<icon BUILTIN="button_ok"/>
+</node>
+<node TEXT="https://stripe.com/docs/payments/accept-a-payment?ui=elements" ID="ID_1105326381" CREATED="1618190081153" MODIFIED="1618190083516"/>
 </node>
 </node>
 </node>
