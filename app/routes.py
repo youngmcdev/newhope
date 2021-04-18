@@ -62,6 +62,11 @@ def messages():
     pageModel = PageTemplate()
     return render_template('messages.html', model = pageModel)
 
+@app.route('/live')
+def live():
+    pageModel = PageTemplate()
+    return render_template('live.html', model = pageModel)
+
 @app.route('/services')
 def services():
     pageModel = PageTemplate()
