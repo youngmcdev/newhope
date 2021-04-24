@@ -1,1 +1,2 @@
 FLASK_APP=newhope.py
+FLASK_DEBUG=1
