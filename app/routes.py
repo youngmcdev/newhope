@@ -20,6 +20,9 @@ from datetime import datetime, date, time
 #        Note: This is being done via the .flaskenv file
 # 4) Execute "flask run"
 
+# Activate environment one server
+# source /home/nhbcalle/virtualenv/proj/newhopebeta/3.8/bin/activate && cd /home/nhbcalle/proj/newhopebeta
+
 stripe.api_key = ""
 
 class PageTemplate:
