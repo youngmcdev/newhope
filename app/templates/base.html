@@ -50,20 +50,50 @@
             
         }
 
+
         .nh-page-first-row{
-            background-image: url('{{ url_for("static", filename="church2.png") }}');
             background-repeat: no-repeat;
             background-position: top right;
             background-attachment: scroll;
             background-size: cover;
-            min-height: 600px;
+            min-height: 300px;
             color: white;
+        }
+        .nh-page-first-row h1{
+            font-variant: small-caps;
+        }
+        .nh-page-first-row1{
+            background-image: url('{{ url_for("static", filename="church2.jpg") }}');
+            min-height: 600px;
+        }
+        .nh-page-first-row2{
+            background-image: url('{{ url_for("static", filename="clouds-n-canyon.jpg") }}');
+        }
+
+        .nh-page-first-row3{
+            background-image: url('{{ url_for("static", filename="clouds-n-mountains.jpg") }}');
+        }
+
+        .nh-page-first-row2 h1, .nh-page-first-row3 h1{
+            font-variant: small-caps;
+            text-align: center;
+            padding-top: 50px;
         }
 
         .nh-navbar{
             background-image: url('{{ url_for("static", filename="logo-trans-56.png") }}');
             background-repeat: no-repeat;
             background-attachment: scroll;
+        }
+
+        .nh-h4{
+            font-weight: 500;
+            font-size: 1.25rem;
+            line-height: 1.2;
+        }
+
+        .nh-center{
+            text-align: center;
         }
     </style>
 

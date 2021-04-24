@@ -1,32 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="bg-light p-3 rounded">
-    <div class="">
-    <h1>Giving to New Hope</h1>
-    <p class="nh-body">My God, how majestic is your name in all the earth, who has set your glory above the heavens! From the lips of babes and infants you have established strength, because of your adversaries, that you might silence the enemy and the avenger. When I consider your heavens, the work of your fingers, the moon and the stars, which you have ordained; what is man, that you think of him? What is the son of man, that you care for him? For you have made him a little lower than God, and crowned him with glory and honor. You make him ruler over the works of your hands. You have put all things under his feet: All sheep and cattle, yes, and the animals of the field, The birds of the sky, the fish of the sea, and whatever passes through the paths of the seas. Yahweh, our LORD, how majestic is your name in all the earth!</p>
-    <div>
-        <form id="payment-form">
-            <div id="card-element"></div>
-            <div style="display: none;">
-                <button id="submit">
-                    <div class="spinner hidden" id="spinner"></div>
-                    <span id="button-text">Pay Now</span>
-                </button>
-                <p id="card-error" role="alert"></p>
-                <p class="result-message hidden">
-                    Payment succeeded, see the result in your <a href="" target="_blank">Stripe dashboard.</a> Refresh the page to pay again.
-                </p>
-            </div>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="$0.00">
-                <button type="button" id="contribute-btn" class="btn btn-primary">Contribute</button>
-            </div>
-        </form>
+<div class="row p-3 nh-page-first-row rounded nh-page-first-row3">
+    <div class="col-12" style="text-align: center;">
+        <h1>Giving To New Hope Baptist Church</h1>
+        <a href="#" class="btn btn-primary" style="margin-top: 20px;">Give Online</a>
     </div>
-    <p class="lead nh-button" style="display:none;">
-        <a href="#" class="btn btn-lg btn-primary" role="button">Learn More</a>
-        <a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" style="display:none;">Learn more</a>
-    </p>
+</div>
+<div class="row p-3 rounded">
+    <div class="col-12">
+        <h4>Praesent elementum facilisis</h4>
+        <p>Quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus. Ac felis donec et odio pellentesque diam. Suscipit adipiscing bibendum est ultricies. Mi proin sed libero enim sed faucibus. Amet volutpat consequat mauris nunc congue nisi vitae. Erat velit scelerisque in dictum non consectetur a erat. Fermentum posuere urna nec tincidunt praesent semper feugiat nibh. Porttitor eget dolor morbi non arcu. Mus mauris vitae ultricies leo integer. Odio pellentesque diam volutpat commodo.</p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            Augue interdum velit euismod in. In nisl nisi scelerisque eu. Rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Libero id faucibus nisl tincidunt eget nullam non nisi est. Vitae tempus quam pellentesque nec nam aliquam. Accumsan tortor posuere ac ut consequat semper viverra nam. Tempor orci eu lobortis elementum nibh tellus molestie. Vitae congue eu consequat ac. 
+        </p>
+    </div>
+    <div class="col-md-6">
+        <h5>Checks payable to <em>New Hope Baptist Church</em> are also accepted</h5>
+        <p>Mail checks to the following address:</p>
+        <p>
+            New Hope Baptist Church<br />
+            2011 Lincoln Rd.<br />Allegan, MI 49010
+        </p>
+        <p>Our financials are available to members at anytime</p>
     </div>
 </div>
 {% endblock %}
@@ -39,27 +36,27 @@
     var stripe = Stripe('pk_test_51IYdpzKkHVDoGTuCRaJG0e95sP0DTMeSpbU8jtUimopXdeKa9p1XwSHQXCDIjW5mzz4DmsjQghgR0rxYOTCTDYqF001MpBxf9m');
     var contributeButton = document.getElementById('contribute-btn');
 
-    contributeButton.addEventListener('click', function() {
+    contributeButton.addEventListener('click', function () {
         // Create a new Checkout Session using the server-side endpoint created in step 3.
         fetch('/create-checkout-session', {
             method: 'POST',
         })
-            .then(function(response) {
+            .then(function (response) {
                 console.log(response.json);
                 return response.json();
             })
-            .then(function(session) {
+            .then(function (session) {
                 console.log(session);
                 return stripe.redirectToCheckout({ sessionId: session.id });
             })
-            .then(function(result) {
+            .then(function (result) {
                 // If `redirectToCheckout` fails due to a browser or network error, should display the localized error message to the customer using `error.message`.
                 console.log(result);
                 if (result.error) {
                     alert(result.error.message);
                 }
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.error('Error:', error);
             });
     });
