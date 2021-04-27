@@ -141,7 +141,21 @@
             {% block content %}{% endblock %}
         </main>
     </div>
-    <br /><br />
+    <br />
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="container row">
+        <div class="col-12">
+            <dl>
+                <dt>Flash Messages</dt>
+                {% for message in messages %}
+                <dd>{{ message }}</dd>
+                {% endfor %}
+            </dl>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
     <footer class="mt-auto text-center">
             <div class="">
                 <p>

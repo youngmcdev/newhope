@@ -1,8 +1,9 @@
 import json
 import os
 import stripe
-from flask import Flask, url_for, render_template, jsonify, request
+from flask import Flask, url_for, render_template, jsonify, request, flash, redirect
 from app import app
+from app.forms import LoginForm
 from datetime import datetime, date, time
 
 # If you've just cloned the repo
@@ -74,6 +75,17 @@ def live():
 def services():
     pageModel = PageTemplate()
     return render_template('services.html', model = pageModel)
+
+@app.route('/login', methods = ['GET', 'POST'])
+def login():
+    form = LoginForm()
+    pageModel = PageTemplate()
+    if form.validate_on_submit():
+        flash('Login requested for user {}, remember_me={}'.format(
+            form.login.data, form.remember_me.data))
+        return redirect(url_for('index'))
+    flash('did nod validate')
+    return render_template('login.html', title='Sign In', form=form, model = pageModel)
 
 @app.route('/create-checkout-session', methods = ['POST'])
 def create_checkout_session():

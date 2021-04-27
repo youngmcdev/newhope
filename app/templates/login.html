@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <div class="wrapper fadeInDown">
+        <div id="formContent">
+          <!-- Tabs Titles -->
+      
+          <!-- Icon -->
+          <div class="fadeIn first">
+            <img src="{{ url_for("static", filename="logo-trans-56.png") }}"  id="icon" alt="User Icon" />
+          </div>
+      
+          <!-- Login Form -->
+          <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            {{ form.login(maxLength=30, placeholder="login", class="fadeIn second") }}
+            {% for error in form.login.errors %}
+            <br /><span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+            {{ form.password(maxLength=50, placeholder="password", class="fadeIn third") }}
+            {% for error in form.password.errors %}
+            <br /><span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+            {{ form.submit(value="Log In", class="fadeIn fourth") }}
+            <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+          </form>
+      
+          <!-- Remind Passowrd -->
+          <div id="formFooter">
+            <a class="underlineHover" href="#">Forgot Password?</a>
+          </div>
+      
+        </div>
+      </div>
+{% endblock %}
