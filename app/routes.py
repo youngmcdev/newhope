@@ -69,6 +69,7 @@ def messages():
 @app.route('/live')
 def live():
     pageModel = PageTemplate()
+    z = 1/0
     return render_template('live.html', model = pageModel)
 
 @app.route('/services')
