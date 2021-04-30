@@ -3,8 +3,10 @@ import os
 import stripe
 from flask import Flask, url_for, render_template, jsonify, request, flash, redirect
 from app import app
-from app.forms import LoginForm
+from app.forms import LoginForm, DonateForm
 from datetime import datetime, date, time
+import logging
+from logging.handlers import RotatingFileHandler
 
 # If you've just cloned the repo
 # 1) Execute "python -m venv venv" to set up the virtual environment
@@ -24,7 +26,7 @@ from datetime import datetime, date, time
 # Activate environment one server
 # source /home/nhbcalle/virtualenv/proj/newhopebeta/3.8/bin/activate && cd /home/nhbcalle/proj/newhopebeta
 
-stripe.api_key = ""
+stripe.api_key = "oops"
 
 class PageTemplate:
     def __init__(self):
@@ -46,10 +48,10 @@ def index():
     pageModel = PageTemplate()
     return render_template('index.html', model = pageModel)
 
-@app.route('/donate')
-def donate():
+@app.route('/give')
+def give():
     pageModel = PageTemplate()
-    return render_template('donate.html', model = pageModel)
+    return render_template('give.html', model = pageModel)
 
 @app.route('/events')
 def events():
@@ -88,6 +90,12 @@ def login():
     flash('did nod validate')
     return render_template('login.html', title='Sign In', form=form, model = pageModel)
 
+@app.route('/donate', methods = ['GET', 'POST'])
+def donate():
+    form = DonateForm
+    pageModel = PageTemplate()
+    return render_template('donate.html', form = form, model = pageModel)
+
 @app.route('/create-checkout-session', methods = ['POST'])
 def create_checkout_session():
     session = stripe.checkout.Session.create(
@@ -122,12 +130,16 @@ def checkout_cancel():
 @app.route('/create-payment-intent', methods=['POST'])
 def create_payment():
     try:
+        app.logger.info('In create-payment-intent')
+        app.logger.info(request.data)
         data = json.loads(request.data)
+        app.logger.info(data)
+        # A PaymentIntent tracks the customer's payment lifecycle, keeping track of any failed payment attempts and ensuring the customer is only charged once.
         intent = stripe.PaymentIntent.create(
             amount=calculate_order_amount(data['items']),
             currency='usd'
         )
-
+        # Return the PaymentIntent's client secret in the response to finish the payment on the client.
         return jsonify({
             'clientSecret': intent['client_secret']
         })
@@ -138,4 +150,4 @@ def calculate_order_amount(items):
     # Replace this constant with a calculation of the order's amount
     # Calculate the order total on the server to prevent
     # people from directly manipulating the amount on the client
-    return 21.12
+    return 1986

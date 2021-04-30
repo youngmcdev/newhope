@@ -110,9 +110,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" data-id="index" href="{{ url_for('index') }}">Home</a>
-                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link" data-id="introduction" href="{{ url_for('introduction') }}">About</a>
                     </li>
@@ -129,22 +126,22 @@
                         <a class="nav-link" data-id="events" href="{{ url_for('events') }}">Events</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-id="donate" href="{{ url_for('donate') }}">Giving</a>
+                        <a class="nav-link" data-id="give" href="{{ url_for('give') }}">Giving</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
     </div>
-    <div class="nh-main">
-        <main class="container nh-container">
+    <div id="main-div" class="nh-main">
+        <main id="main-container" class="container nh-container">
             {% block content %}{% endblock %}
         </main>
     </div>
     <br />
     {% with messages = get_flashed_messages() %}
     {% if messages %}
-    <div class="container row">
+    <div id="flash-message-row" class="container row">
         <div class="col-12">
             <dl>
                 <dt>Flash Messages</dt>
@@ -187,27 +184,10 @@
 
         links.removeClass('active');
         currentMenuItem.addClass('active');
-        //console.log(requestEndpoint);
-
-        switch(requestEndpoint){
-                case 'services':
-                    break;
-                case 'introduction':
-                    break;
-                case 'sermons':
-                    break;
-                case 'events':
-                    break;
-                case 'donate':
-                    break;
-                default:
-                    break;
-            }
 
         $('a.nav-link').on('click', function(obj){
-            //toggler.click();
-            var targetUrl = $(obj.target).attr('href');
             $('.navbar-collapse').collapse('hide');
+            var targetUrl = $(obj.target).attr('href');
             
             if($('nav.navbar button.navbar-toggler').is(':visible')){
                 setTimeout(function(){location.href = targetUrl}, 200);

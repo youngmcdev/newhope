@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row p-3 nh-page-first-row rounded nh-page-first-row2">
+    <div class="col-12" style="text-align: center;">
+        <h1>Giving To New Hope Baptist Church</h1>
+        <a href="{{ url_for('donate') }}" class="btn btn-primary" style="margin-top: 20px;">Give Online</a>
+    </div>
+</div>
+<div class="row p-3 rounded">
+    <div class="col-12">
+        <h4>Praesent elementum facilisis</h4>
+        <p>Quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus. Ac felis donec et odio pellentesque diam. Suscipit adipiscing bibendum est ultricies. Mi proin sed libero enim sed faucibus. Amet volutpat consequat mauris nunc congue nisi vitae. Erat velit scelerisque in dictum non consectetur a erat. Fermentum posuere urna nec tincidunt praesent semper feugiat nibh. Porttitor eget dolor morbi non arcu. Mus mauris vitae ultricies leo integer. Odio pellentesque diam volutpat commodo.</p>
+    </div>
+    <div class="col-md-6">
+        <p>
+            Augue interdum velit euismod in. In nisl nisi scelerisque eu. Rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Libero id faucibus nisl tincidunt eget nullam non nisi est. Vitae tempus quam pellentesque nec nam aliquam. Accumsan tortor posuere ac ut consequat semper viverra nam. Tempor orci eu lobortis elementum nibh tellus molestie. Vitae congue eu consequat ac. 
+        </p>
+    </div>
+    <div class="col-md-6">
+        <h5>Checks payable to <em>New Hope Baptist Church</em> are also accepted</h5>
+        <p>Mail checks to the following address:</p>
+        <p>
+            New Hope Baptist Church<br />
+            2011 Lincoln Rd.<br />Allegan, MI 49010
+        </p>
+        <p>Our financials are available to members at anytime</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- <script src="https://js.stripe.com/v3/"></script> -->
+<script>
+    // A reference to Stripe.js initialized with test publishable API key. 
+    // Redirect to Stripe Checkout when clicked, using redirectToCheckout and providing the Checkout Session ID:
+    // var stripe = Stripe('pk_test_51IYdpzKkHVDoGTuCRaJG0e95sP0DTMeSpbU8jtUimopXdeKa9p1XwSHQXCDIjW5mzz4DmsjQghgR0rxYOTCTDYqF001MpBxf9m');
+    // var contributeButton = document.getElementById('contribute-btn');
+
+    // contributeButton.addEventListener('click', function () {
+    //     // Create a new Checkout Session using the server-side endpoint created in step 3.
+    //     fetch('/create-checkout-session', {
+    //         method: 'POST',
+    //     })
+    //         .then(function (response) {
+    //             console.log(response.json);
+    //             return response.json();
+    //         })
+    //         .then(function (session) {
+    //             console.log(session);
+    //             return stripe.redirectToCheckout({ sessionId: session.id });
+    //         })
+    //         .then(function (result) {
+    //             // If `redirectToCheckout` fails due to a browser or network error, should display the localized error message to the customer using `error.message`.
+    //             console.log(result);
+    //             if (result.error) {
+    //                 alert(result.error.message);
+    //             }
+    //         })
+    //         .catch(function (error) {
+    //             console.error('Error:', error);
+    //         });
+    // });
+
+</script>
+{% endblock %}
