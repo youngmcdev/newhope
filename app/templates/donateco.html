@@ -3,7 +3,7 @@
 <div class="row p-3 nh-page-first-row rounded nh-page-first-row2">
     <div class="col-12 nh-center">
         <h1>Giving To New Hope Baptist Church</h1>
-        <a href="{{ url_for('donate') }}" class="btn btn-primary" style="margin-top: 20px;">Give Online</a>
+        <a href="#give-section" class="btn btn-primary" style="margin-top: 20px;">Give Online</a>
     </div>
 </div>
 <div class="row p-3 rounded">
@@ -26,40 +26,28 @@
         <p>Our financials are available to members at anytime</p>
     </div>
 </div>
+<div class="row p-3 rounded">
+    <div class="col-sm-2 col-lg-3"></div>
+    <div class="col-sm-8 col-lg-6">
+        <p id="give-section">Enter your dollar amount and click <em>Give Now</em> to go to our secure check out.</p>
+        <form action="{{ url_for('create_checkout_session') }}" method="post">
+        <div class="input-group mb-3">
+            <input name="amount" type="number" class="form-control" placeholder="$0.00">
+            <div class="input-group-append">
+              <button class="btn btn-primary" name="submit" type="submit">Give Now</button>
+            </div>
+          </div>
+        </form>
+    </div>
+    <div class="col-sm-2 col-lg-3"></div>
+</div>
 {% endblock %}
-
 {% block scripts %}
-<!-- <script src="https://js.stripe.com/v3/"></script> -->
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='donate.css') }}" /> -->
+<script src="https://js.stripe.com/v3/"></script>
+<!-- <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script> -->
+<script src="{{ url_for('static', filename='donateco.js') }}" defer></script>
 <script>
-    // A reference to Stripe.js initialized with test publishable API key. 
-    // Redirect to Stripe Checkout when clicked, using redirectToCheckout and providing the Checkout Session ID:
-    // var stripe = Stripe('pk_test_51IYdpzKkHVDoGTuCRaJG0e95sP0DTMeSpbU8jtUimopXdeKa9p1XwSHQXCDIjW5mzz4DmsjQghgR0rxYOTCTDYqF001MpBxf9m');
-    // var contributeButton = document.getElementById('contribute-btn');
-
-    // contributeButton.addEventListener('click', function () {
-    //     // Create a new Checkout Session using the server-side endpoint created in step 3.
-    //     fetch('/create-checkout-session', {
-    //         method: 'POST',
-    //     })
-    //         .then(function (response) {
-    //             console.log(response.json);
-    //             return response.json();
-    //         })
-    //         .then(function (session) {
-    //             console.log(session);
-    //             return stripe.redirectToCheckout({ sessionId: session.id });
-    //         })
-    //         .then(function (result) {
-    //             // If `redirectToCheckout` fails due to a browser or network error, should display the localized error message to the customer using `error.message`.
-    //             console.log(result);
-    //             if (result.error) {
-    //                 alert(result.error.message);
-    //             }
-    //         })
-    //         .catch(function (error) {
-    //             console.error('Error:', error);
-    //         });
-    // });
 
 </script>
 {% endblock %}

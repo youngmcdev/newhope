@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
+    <meta name="description" content="New Hope Baptist Church, Allegan, Michigan">
     <title>{{ model.title }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
@@ -126,7 +126,7 @@
                         <a class="nav-link" data-id="events" href="{{ url_for('events') }}">Events</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-id="give" href="{{ url_for('give') }}">Giving</a>
+                        <a class="nav-link" data-id="give" href="{{ url_for('donateco') }}">Giving</a>
                     </li>
                 </ul>
             </div>
@@ -173,6 +173,8 @@
 
 
 <script>
+    var nhdata = {};
+
     $(document).ready(function () {
         var titleElement = $('main h1');
         var bodyElement = $('main p.nh-body');
