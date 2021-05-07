@@ -21,7 +21,8 @@ from logging.handlers import RotatingFileHandler
 # 2) Activate the environment by executing "venv\Scripts\activate"
 # 3) Set the FLASK_APP environment variable "set FLASK_APP=<name_of_python_file>" example "set FLASK_APP=newhope.py"
 #        Note: This is being done via the .flaskenv file
-# 4) Execute "flask run"
+# 4) Set any environment variables needed by the application.
+# 5) Execute "flask run"
 
 # Activate environment one server
 # source /home/nhbcalle/virtualenv/proj/newhopebeta/3.8/bin/activate && cd /home/nhbcalle/proj/newhopebeta
@@ -33,23 +34,14 @@ stripeKeys = {
 }
 
 class PageTemplate:
-    def __init__(self):
-        self.title = 'New Hope Baptist Church'
+    def __init__(self, title):
+        self.title = title
 
-pageModel = PageTemplate()
+pageModel = PageTemplate('New Hope Baptist Church')
 
 @app.route('/')
 @app.route('/index')
 def index():
-    # user = {'username': 'Mark'}
-    # currentDate = datetime.now()
-    # today = datetime.date(currentDate).strftime("%d-%b-%Y")
-    # now = datetime.time(currentDate).strftime("%H:%M:%S")
-    # sermonList = [
-    #     {'title':'Title One', 'image':'', 'url':'', 'description':'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Neque gravida in fermentum et sollicitudin. Mollis nunc sed id semper risus. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus.'},
-    #     {'title':'Title Two', 'image':'', 'url':'', 'description':'Congue nisi vitae suscipit tellus mauris a diam maecenas. Orci sagittis eu volutpat odio facilisis mauris. Suscipit tellus mauris a diam maecenas sed enim ut. Nec dui nunc mattis enim ut tellus elementum sagittis.'},
-    #     {'title':'Title Three', 'image':'', 'url':'', 'description':'Diam sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Orci nulla pellentesque dignissim enim sit amet venenatis urna cursus. Cum sociis natoque penatibus et magnis dis parturient. Eget magna fermentum iaculis eu non diam.'}
-    #     ]
     return render_template('index.html', model = pageModel)
 
 @app.route('/give')
@@ -70,7 +62,6 @@ def messages():
 
 @app.route('/live')
 def live():
-    z = 1/0
     return render_template('live.html', model = pageModel)
 
 @app.route('/services')
@@ -104,14 +95,15 @@ def donate():
 @app.route('/create-checkout-session', methods = ['POST'])
 def create_checkout_session():
     try:
-        dollarAmount = float(request.form['amount'])
-        amount = int(dollarAmount * 100)
-        app.logger.info(f'create-checkout-session posted {str(amount)}')
+        dollarAmount = int(request.form['amount'])
+        amount = dollarAmount * 100
+        app.logger.info('create-checkout-session posted ' + str(amount))
         # domain_url = "http://localhost:5000/"
         stripe.api_key = stripeKeys["secretKey"]
 
         session = stripe.checkout.Session.create(
             payment_method_types = ['card'],
+            submit_type = 'donate',
             line_items = [{
                 'price_data': {
                     'currency': 'usd',
@@ -134,12 +126,12 @@ def create_checkout_session():
         app.logger.info('session ID ' + session.id)
         return jsonify(id = session.id)
     except Exception as e:
-        app.logger.info(str(e))
+        app.logger.error('An exception was thrown creating a stripe checkout sesson. ' + str(e))
         return jsonify(error=str(e)), 403
 
 @app.route('/checkout-success')
 def checkout_success():
-    return render_template('success.html', model = pageModel)
+    return render_template('success.html', model = PageTemplate('Thank you!') )
 
 @app.route('/checkout-cancel')
 def checkout_cancel():
@@ -162,6 +154,7 @@ def create_payment():
             'clientSecret': intent['client_secret']
         })
     except Exception as e:
+        app.logger.error('An exception was thrown creating a stripe payment intent. ' + str(e))
         return jsonify(error=str(e)), 403
 
 def calculate_order_amount(items):

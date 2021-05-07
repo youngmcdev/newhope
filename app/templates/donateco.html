@@ -29,15 +29,14 @@
 <div class="row p-3 rounded">
     <div class="col-sm-2 col-lg-3"></div>
     <div class="col-sm-8 col-lg-6">
-        <p id="give-section">Enter your dollar amount and click <em>Give Now</em> to go to our secure check out.</p>
-        <form action="{{ url_for('create_checkout_session') }}" method="post">
+        <p id="give-section" style="color: #0d6efd; font-weight: 600;">Enter a whole-dollar amount and click <em>Give Now</em> to go to our secure check out.</p>
         <div class="input-group mb-3">
-            <input name="amount" type="number" class="form-control" placeholder="$0.00">
+            <input id="amount" name="amount" type="number" class="form-control" placeholder="$0" onkeypress="javascript: return DonateCoModule.isNumber(event)">
             <div class="input-group-append">
-              <button class="btn btn-primary" name="submit" type="submit">Give Now</button>
+              <button class="btn btn-primary" id="give-button" name="give-button" type="button">Give Now</button>
             </div>
-          </div>
-        </form>
+        </div>
+        
     </div>
     <div class="col-sm-2 col-lg-3"></div>
 </div>
@@ -48,6 +47,15 @@
 <!-- <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script> -->
 <script src="{{ url_for('static', filename='donateco.js') }}" defer></script>
 <script>
+    nhdata.configUrl = '{{ url_for("get_publishable_key") }}';
+    nhdata.checkoutUrl = '{{ url_for("create_checkout_session") }}';
 
+    $(document).ready(function(){
+        DonateCoModule.init();
+        var giveButton = document.getElementById('give-button');
+        var amountInput = document.getElementById('amount');
+        giveButton.addEventListener('click', function(event){DonateCoModule.redirectToCheckout(event, amountInput);});
+        //amountInput.addEventListener('keypress', DonateCoModule.isNumber);
+    });
 </script>
 {% endblock %}

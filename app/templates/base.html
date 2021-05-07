@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="New Hope Baptist Church, Allegan, Michigan">
     <title>{{ model.title }}</title>
+    <link rel="icon" type="image/png"  href="{{ url_for('static', filename='nh-icon.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='carousel.css') }}">
     <meta name="theme-color" content="#7952b3">
 
@@ -173,7 +175,21 @@
 
 
 <script>
-    var nhdata = {};
+    var nhdata = {
+        fetchStatus: function(response){
+            if(response.status >= 200 && response.status < 300){
+                console.log({FetchResponse:response});
+                return Promise.resolve(response);
+            }
+            else{
+                return Promise.reject(new Error('Fetch Error! Status:' + response.status + ' - ' + response.statusText));
+            }
+        },
+        fetchJson: function(response){
+            console.log({FetchJsonData:response});
+            return response.json();
+        }
+    };
 
     $(document).ready(function () {
         var titleElement = $('main h1');

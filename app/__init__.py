@@ -21,7 +21,7 @@ if not app.debug:
     app.logger.setLevel(logging.INFO)
     app.logger.info('New Hope startup')
 
-    msg = "Server:" + app.config['MAIL_SERVER'] + ", Password:" + app.config['MAIL_PASSWORD'] + ", Port:" + str(app.config['MAIL_PORT']) + ", User:" + app.config['MAIL_USERNAME']
+    msg = "Server:" + app.config['MAIL_SERVER'] + ", Password:" + app.config['MAIL_PASSWORD'] + ", Port:" + str(app.config['MAIL_PORT']) + ", User:" + app.config['MAIL_USERNAME'] + ", Sender:" + app.config['MAIL_SENDER']
     app.logger.info(msg)
     if app.config['MAIL_SERVER']:
         auth = None
@@ -32,7 +32,7 @@ if not app.debug:
             secure = ()
         mail_handler = SMTPHandler(
             mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
-            fromaddr='no-reply@' + app.config['MAIL_SERVER'],
+            fromaddr=app.config['MAIL_SENDER'],
             toaddrs=app.config['ADMINS'], subject='New Hope Logger',
             credentials=auth, secure=secure)
         mail_handler.setLevel(logging.ERROR)
