@@ -89,10 +89,10 @@ def get_publishable_key():
     stripeConfig = {"publicKey": stripeKeys["publishableKey"]}
     return jsonify(stripeConfig)
 
-@app.route('/donate', methods = ['GET', 'POST'])
-def donate():
+@app.route('/donatecu', methods = ['GET', 'POST'])
+def donatecu():
     form = DonateForm
-    return render_template('donate.html', form = form, model = pageModel)
+    return render_template('donatecu.html', form = form, model = pageModel)
 
 @app.route('/create-checkout-session', methods = ['POST'])
 def create_checkout_session():
