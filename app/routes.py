@@ -30,8 +30,8 @@ from logging.handlers import RotatingFileHandler
 
 # stripe help: https://testdriven.io/blog/flask-stripe-tutorial/
 stripeKeys = {
-    "secretKey": os.environ["STRIPE_SECRET_KEY"] or "oops",
-    "publishableKey": os.environ["STRIPE_PUBLISHABLE_KEY"] or "sorry",
+    "secretKey": os.environ.get('STRIPE_SECRET_KEY') or 'oops',
+    "publishableKey": os.environ.get('STRIPE_PUBLISHABLE_KEY') or 'sorry',
 }
 
 class PageTemplate:
