@@ -36,6 +36,8 @@ stripeKeys = {
 class PageTemplate:
     def __init__(self, title):
         self.title = title
+        self.customerName = 'John Doe'
+        self.donationAmount = 0
 
 pageModel = PageTemplate('New Hope Baptist Church')
 
@@ -100,7 +102,10 @@ def create_checkout_session():
         app.logger.info('create-checkout-session posted ' + str(amount))
         # domain_url = "http://localhost:5000/"
         stripe.api_key = stripeKeys["secretKey"]
-
+        successUrl = url_for('checkout_success', _external = True) + "?session_id={CHECKOUT_SESSION_ID}"
+        cancelUrl = url_for('checkout_cancel', _external = True)
+        app.logger.info(f'SuccessUrl:{successUrl}')
+        app.logger.info(f'CancelUrl:{cancelUrl}')
         session = stripe.checkout.Session.create(
             payment_method_types = ['card'],
             submit_type = 'donate',
@@ -119,8 +124,8 @@ def create_checkout_session():
                 'quantity': 1
             }],
             mode = 'payment',
-            success_url = url_for('checkout_success', session_id="{CHECKOUT_SESSION_ID}", _external = True),
-            cancel_url = url_for('checkout_cancel', _external = True)
+            success_url = successUrl,
+            cancel_url = cancelUrl
         )
         # return jsonify({"sessionId": session["id"]})
         app.logger.info('session ID ' + session.id)
@@ -131,7 +136,17 @@ def create_checkout_session():
 
 @app.route('/checkout-success')
 def checkout_success():
-    return render_template('success.html', model = PageTemplate('Thank you!') )
+    successModel = PageTemplate('Thank you!')
+    sessionIdFromStripeSession = request.args.get('session_id')
+    app.logger.info(f'Session ID from URL: "{sessionIdFromStripeSession}"')
+    if(sessionIdFromStripeSession and sessionIdFromStripeSession.strip()):
+        session = stripe.checkout.Session.retrieve(sessionIdFromStripeSession)
+        app.logger.info(f'CustomerId:"{session.customer}"')
+        customer = stripe.Customer.retrieve(session.customer)
+        successModel.customerName = customer.name or customer.email or ""
+        successModel.donationAmount = int(session.amount_total/100)
+
+    return render_template('success.html', model = successModel)
 
 @app.route('/checkout-cancel')
 def checkout_cancel():
