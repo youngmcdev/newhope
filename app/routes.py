@@ -1,5 +1,6 @@
 import json
 import os
+import math
 import stripe
 from flask import Flask, url_for, render_template, jsonify, request, flash, redirect
 from app import app
@@ -94,10 +95,16 @@ def donatecu():
     form = DonateForm
     return render_template('donatecu.html', form = form, model = pageModel)
 
+@app.route('/donate', methods = ['GET', 'POST'])
+def donate():
+    # this route does not actually 'checkout'
+    form = DonateForm
+    return render_template('donate.html', form = form, model = pageModel)
+
 @app.route('/create-checkout-session', methods = ['POST'])
 def create_checkout_session():
     try:
-        dollarAmount = int(request.form['amount'])
+        dollarAmount = math.floor(float(request.form['amount']))
         amount = dollarAmount * 100
         app.logger.info('create-checkout-session posted ' + str(amount))
         # domain_url = "http://localhost:5000/"

@@ -49,13 +49,13 @@
 <script>
     nhdata.configUrl = '{{ url_for("get_publishable_key") }}';
     nhdata.checkoutUrl = '{{ url_for("create_checkout_session") }}';
-
+    //redirect for donate.html
+    //modalButton.addEventListener('click', function(event){DonateCoModule.redirectToCheckout(event, amountInput);});
     $(document).ready(function(){
         DonateCoModule.init();
         var giveButton = document.getElementById('give-button');
         var amountInput = document.getElementById('amount');
         giveButton.addEventListener('click', function(event){DonateCoModule.redirectToCheckout(event, amountInput);});
-        //amountInput.addEventListener('keypress', DonateCoModule.isNumber);
     });
 </script>
 {% endblock %}
