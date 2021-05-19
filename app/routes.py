@@ -34,11 +34,14 @@ stripeKeys = {
     "publishableKey": os.environ.get('STRIPE_PUBLISHABLE_KEY') or 'sorry',
 }
 
+googleApiKey = os.environ.get('GOOGLE_API_KEY') or 'my-google-api-key'
+
 class PageTemplate:
     def __init__(self, title):
         self.title = title
         self.customerName = 'John Doe'
         self.donationAmount = 0
+        self.googleApiKey = googleApiKey
 
 pageModel = PageTemplate('New Hope Baptist Church')
 
@@ -88,6 +91,7 @@ def donateco():
 @app.route("/donateco-config")
 def get_publishable_key():
     stripeConfig = {"publicKey": stripeKeys["publishableKey"]}
+    app.logger.info(f'Getting the publishable key {stripeConfig.publicKey}')
     return jsonify(stripeConfig)
 
 @app.route('/donatecu', methods = ['GET', 'POST'])
@@ -106,7 +110,7 @@ def create_checkout_session():
     try:
         dollarAmount = math.floor(float(request.form['amount']))
         amount = dollarAmount * 100
-        app.logger.info('create-checkout-session posted ' + str(amount))
+        app.logger.info('create-checkout-session AmountPosted:' + str(amount))
         # domain_url = "http://localhost:5000/"
         stripe.api_key = stripeKeys["secretKey"]
         successUrl = url_for('checkout_success', _external = True) + "?session_id={CHECKOUT_SESSION_ID}"
