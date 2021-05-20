@@ -1,5 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+    p.p-belief span {
+        font-weight: 300;
+    }
+    p.p-belief span::after{
+        margin-right: 10px;
+        margin-left: 10px;
+        /*0025cf black circle; 0025cb white circle; 0025e6 white bullet; 0025fe black medium small square; 0025fd white medium small square
+          0025c7 white diamond; 0025c8 white plus inner diamond; 0025aa small square
+        */
+        content: '\0025aa'; 
+    }
+    p.p-belief span.p-belief-last::after{
+        margin-right: inherit;
+        margin-left: inherit;
+        content: '';
+    }
+</style>
 <div class="row p-3 nh-page-first-row rounded nh-page-first-row2">
     <div class="col-lg-2"></div>
     <div class="col-lg-8">
@@ -10,32 +28,54 @@
     <div class="col-lg-2"></div>
 </div>
 <div class="row p-3 rounded">
-    <div class="col-md-6">
+    <div class="col-12">
         <h3>The Bible</h3>
-        <p>
+        <p class="p-belief" style="font-size: 1.128rem;">
             We believe the Bible to be the revealed Word of God, fully and verbally inspired of God. We believe the Scriptures to be the inerrant, infallible Word of God, as found within the sixty-six books from Genesis to Revelation. We believe God not only inspired every word, but has preserved them through the ages. We believe the King James Version is the preserved Word of God for the English-speaking people.
+            (<span>Psalm 12:6-7</span><span>II&nbsp;Timothy 3:15-17</span><span>I&nbsp;Peter 1:23-25</span><span class="p-belief-last">II&nbsp;Peter 1:19-21</span>)
         </p>
-        <h3>God</h3>
-        <p>
-            We believe in one God, who is eternal, self-existent, infinite, and immutable. We believe He has one nature, one essence, and one substance, yet manifests Himself to man in three persons: the Father, the Son, and the Holy Spirit.
-        </p>
-        <h3>The Lord Jesus Christ</h3>
-        <p>We believe Jesus Christ to be the one and only Savior of mankind. We believe Jesus Christ to be eternally God and to posses all the attributes of Deity. We believe that the Lord Jesus Christ was virgin born, that He was God incarnate, and that the purposes of the incarnation were to reveal God, to redeem men, and to rule over God’s kingdom. We believe Jesus Christ never relinquished any attributes of His Deity, but merely veiled them. We believe He lived a perfect, sinless life, at the end of which He was offered for all mankind as a substitutionary sacrifice for man’s sin. This sacrifice was a just payment to God for the forgiveness of sin. It was activated by His death through the shedding of His blood on the Cross and was accepted by God upon His resurrection. We believe He ascended into Heaven after His resurrection to be seated at the right hand of the Father, waiting for the time of receiving His church at the Rapture, and returning sever years later to Earth to rule and reign as King for 1,000 years.</p>
     </div>
     <div class="col-md-6">
+        <h3>God</h3>
+        <p class="p-belief">
+            We believe in one God, who is eternal, self-existent, infinite, and immutable. We believe He has one nature, one essence, and one substance, yet manifests Himself to man in three persons: the Father, the Son, and the Holy Spirit.
+            (<span>Deuteronomy 6:4</span><span>I&nbsp;Timothy 1:17</span><span>James 1:17</span><span class="p-belief-last">I&nbsp;John 4:4</span>)
+        </p>
+        <h3>The Lord Jesus Christ</h3>
+        <p class="p-belief">
+            We believe Jesus Christ to be the one and only Savior of mankind. We believe Jesus Christ to be eternally God and to posses all the attributes of Deity. We believe that the Lord Jesus Christ was virgin born, that He was God incarnate, and that the purposes of the incarnation were to reveal God, to redeem men, and to rule over God’s kingdom. We believe Jesus Christ never relinquished any attributes of His Deity, but merely veiled them. We believe He lived a perfect, sinless life, at the end of which He was offered for all mankind as a substitutionary sacrifice for man’s sin. This sacrifice was a just payment to God for the forgiveness of sin. It was activated by His death through the shedding of His blood on the Cross and was accepted by God upon His resurrection. We believe He ascended into Heaven after His resurrection to be seated at the right hand of the Father, waiting for the time of receiving His church at the Rapture, and returning sever years later to Earth to rule and reign as King for 1,000 years.
+            (<span>Psalm 2:7-9</span><span>Isaiah 7:14, 9:6, 43:11</span><span>Micah 5:2</span><span>Matthew 1:25</span><span>Luke 1:26-35</span><span>John 1:1, 1:3, 14, 18, 29</span><span>Romans 3:19-25, 5:6-15</span><span>Philippians 2:5-11</span><span>I&nbsp;Thessalonians 4:13-18</span><span>I&nbsp;Timothy 2:5, 3:16</span><span>Titus 2:10-15</span><span>Hebrews 7:26, 9:24-28</span><span>I&nbsp;Peter 1:19, 2:2</span><span>I&nbsp;John 1:3</span><span class="p-belief-last">Revelation 20:1-6</span>)
+        </p>
         <h3>The Holy Spirit</h3>
-        <p>We believe the Holy Spirit of God is a person who has personality and all the attributes of Deity. We believe the Holy Spirit has always been involved in the affairs of mankind. However, we believe He has a special ministry which began at Pentecost and will continue until the Rapture. This ministry includes convicting the world of sin, righteousness, and judgment. The Holy Spirit was also sent to regenerate, sanctify, seal, and fill all who have placed their faith in Jesus Christ.</p>
+        <p class="p-belief">
+            We believe the Holy Spirit of God is a person who has personality and all the attributes of Deity. We believe the Holy Spirit has always been involved in the affairs of mankind. However, we believe He has a special ministry which began at Pentecost and will continue until the Rapture. This ministry includes convicting the world of sin, righteousness, and judgment. The Holy Spirit was also sent to regenerate, sanctify, seal, and fill all who have placed their faith in Jesus Christ.
+            (<span>John 3:5-6, 14:16</span><span>Acts 1:5, 11:15</span><span class="p-belief-last">I&nbsp;Corinthians 3:16, 6:19-20, 12:13</span>)
+        </p>
+    </div>
+    <div class="col-md-6">
+        
         <h3>Sin and Salvation</h3>
-        <p>We believe all men are born with an inherited sin nature received from our common ancestor, Adam. We believe that because of his nature, man is a sinner by choice, and he is totally incapable of reforming himself or ceasing from his sin by his own power. We believe the only hope of deliverance for man is </p>
-        <ol>
+        <p class="p-belief">
+            We believe all men are born with an inherited sin nature received from our common ancestor, Adam. We believe that because of his nature, man is a sinner by choice, and he is totally incapable of reforming himself or ceasing from his sin by his own power. We believe the only hope of deliverance for man is 
+        </p>
+        <ol style="font-size: 1.128rem;">
             <li>A total change of mind concerning his sinful condition and inability to change it</li>
             <li>Turning to Jesus Christ as the only Savior </li>
         </ol>
-        <p>We believe that only through the substitutionary sacrifice of Christ on the Cross can a ban be delivered from his sin. We believe that all those who reject Jesus Christ as their Savior are already condemned to an eternity in the Lake of Fire.</p>
+        <p class="p-belief">
+            We believe that only through the substitutionary sacrifice of Christ on the Cross can a ban be delivered from his sin. We believe that all those who reject Jesus Christ as their Savior are already condemned to an eternity in the Lake of Fire.
+            (<span>Genesis 5:1-5</span><span>Acts 4:19, 16:31</span><span>Romans 3:10-23, 5:6-12, 6:23, 10:9-10</span><span>Ephesians 2:8-9</span><span>Titus 3:5-6</span><span class="p-belief-last">Revelation 20:11-14</span>)
+        </p>
         <h3>The New Testament Church</h3>
-        <p>We believe the church began with the calling out of the twelve apostles by Jesus Christ and was empowered on the day of Pentecost. We believe the local church is God’s only institution to carry out His work today. We believe the local church is composed of members who have been saved and baptized according to the command of Christ, and have voluntarily united together for the purposes of worship, fellowship, service, and the Lord’s Table. We believe all true believers will be taken up at the Rapture, just prior to the Tribulation.</p>
+        <p class="p-belief">
+            We believe the church began with the calling out of the twelve apostles by Jesus Christ and was empowered on the day of Pentecost. We believe the local church is God’s only institution to carry out His work today. We believe the local church is composed of members who have been saved and baptized according to the command of Christ, and have voluntarily united together for the purposes of worship, fellowship, service, and the Lord’s Table. We believe all true believers will be taken up at the Rapture, just prior to the Tribulation.
+            (<span>Matthew 16:16-18</span><span>Acts 1:15, 2:41-43, 11:15, 20:28</span><span>I&nbsp;Corinthians 15:51-58</span><span>Ephesians 1:12-14, 5:25-30</span><span>I&nbsp;Thessalonians 4:13-18</span><span class="p-belief-last">I&nbsp;Timothy 3:4-15</span>)
+        </p>
         <h3>The Last Days</h3>
-        <p>We believe in the literal interpretation of the Scriptures in their grammatical and historical context. We believe in the pre-tribulational Rapture of the church saints, followed by the sever-year Tribulation. We believe in the pre-millennial return of Christ to the earth and His literal rule of one thousand years. Following this one thousand years is the Great White Throne judgment and then the new Heaven and new earth. </p>
+        <p class="p-belief">
+            We believe in the literal interpretation of the Scriptures in their grammatical and historical context. We believe in the pre-tribulational Rapture of the church saints, followed by the sever-year Tribulation. We believe in the pre-millennial return of Christ to the earth and His literal rule of one thousand years. Following this one thousand years is the Great White Throne judgment and then the new Heaven and new earth. 
+            (<span>I&nbsp;Corinthians 15:51-58</span><span>I&nbsp;Thessalonians 4:13-18, 5:1-9</span><span class="p-belief-last">Revelation 19-22</span>)
+        </p>
     </div>
 </div>
 {% endblock %}
