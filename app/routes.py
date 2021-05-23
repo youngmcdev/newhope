@@ -1,54 +1,190 @@
-from flask import render_template
+import json
+import os
+import math
+import stripe
+from flask import Flask, url_for, render_template, jsonify, request, flash, redirect
 from app import app
+from app.forms import LoginForm, DonateForm
 from datetime import datetime, date, time
-# To start the application:
+import logging
+from logging.handlers import RotatingFileHandler
+
+# If you've just cloned the repo
+# 1) Execute "python -m venv venv" to set up the virtual environment
+# 2) Activate the environment by executing "venv\Scripts\activate"
+# 3) Install Flask via "pip install flask"
+# 4) Install Stripe via "pip install --upgrade stripe"
+# 5) If the files .env or .flaskenv are being used, then execute "pip install python-dotenv"
+# 6) Execute "flask run"
+
+# To start the application (assuming the environment has been setup after cloning the repo):
 # 1) Open a command console and change directory to the root of the application/repository
 # 2) Activate the environment by executing "venv\Scripts\activate"
 # 3) Set the FLASK_APP environment variable "set FLASK_APP=<name_of_python_file>" example "set FLASK_APP=newhope.py"
 #        Note: This is being done via the .flaskenv file
-# 4) Execute "flask run"
+# 4) Set any environment variables needed by the application.
+# 5) Execute "flask run"
+
+# Activate environment one server
+# source /home/nhbcalle/virtualenv/proj/newhopebeta/3.8/bin/activate && cd /home/nhbcalle/proj/newhopebeta
+
+# stripe help: https://testdriven.io/blog/flask-stripe-tutorial/
+stripeKeys = {
+    "secretKey": os.environ.get('STRIPE_SECRET_KEY') or 'oops',
+    "publishableKey": os.environ.get('STRIPE_PUBLISHABLE_KEY') or 'sorry',
+}
+
+googleApiKey = os.environ.get('GOOGLE_API_KEY') or 'my-google-api-key'
 
 class PageTemplate:
-    def __init__(self):
-        self.title = 'New Hope Baptist Church'
+    def __init__(self, title):
+        self.title = title
+        self.customerName = 'John Doe'
+        self.donationAmount = 0
+        self.googleApiKey = googleApiKey
 
+pageModel = PageTemplate('New Hope Baptist Church')
 
 @app.route('/')
 @app.route('/index')
 def index():
-    # user = {'username': 'Mark'}
-    # currentDate = datetime.now()
-    # today = datetime.date(currentDate).strftime("%d-%b-%Y")
-    # now = datetime.time(currentDate).strftime("%H:%M:%S")
-    # sermonList = [
-    #     {'title':'Title One', 'image':'', 'url':'', 'description':'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Neque gravida in fermentum et sollicitudin. Mollis nunc sed id semper risus. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus.'},
-    #     {'title':'Title Two', 'image':'', 'url':'', 'description':'Congue nisi vitae suscipit tellus mauris a diam maecenas. Orci sagittis eu volutpat odio facilisis mauris. Suscipit tellus mauris a diam maecenas sed enim ut. Nec dui nunc mattis enim ut tellus elementum sagittis.'},
-    #     {'title':'Title Three', 'image':'', 'url':'', 'description':'Diam sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Orci nulla pellentesque dignissim enim sit amet venenatis urna cursus. Cum sociis natoque penatibus et magnis dis parturient. Eget magna fermentum iaculis eu non diam.'}
-    #     ]
-    pageModel = PageTemplate()
-    return render_template('index.html', model=pageModel)
+    return render_template('index.html', model = pageModel)
 
-@app.route('/donate')
-def donate():
-    pageModel = PageTemplate()
-    return render_template('donate.html', model=pageModel)
+@app.route('/give')
+def give():
+    return render_template('give.html', model = pageModel)
 
 @app.route('/events')
 def events():
-    pageModel = PageTemplate()
-    return render_template('events.html', model=pageModel)
+    return render_template('events.html', model = pageModel)
 
 @app.route('/introduction')
 def introduction():
-    pageModel = PageTemplate()
-    return render_template('introduction.html', model=pageModel)
+    return render_template('introduction.html', model = pageModel)
 
 @app.route('/messages')
 def messages():
-    pageModel = PageTemplate()
-    return render_template('messages.html', model=pageModel)
+    return render_template('messages.html', model = pageModel)
+
+@app.route('/live')
+def live():
+    return render_template('live.html', model = pageModel)
 
 @app.route('/services')
 def services():
-    pageModel = PageTemplate()
-    return render_template('services.html', model=pageModel)
+    return render_template('services.html', model = pageModel)
+
+@app.route('/login', methods = ['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        flash('Login requested for user {}, remember_me={}'.format(
+            form.login.data, form.remember_me.data))
+        return redirect(url_for('index'))
+    flash('did nod validate')
+    return render_template('login.html', title='Sign In', form=form, model = pageModel)
+
+@app.route('/donateco', methods = ['GET'])
+def donateco():
+    return render_template('donateco.html', model = pageModel)
+
+@app.route("/donateco-config")
+def get_publishable_key():
+    stripeConfig = {"publicKey": stripeKeys["publishableKey"]}
+    app.logger.info(f'Getting the publishable key {stripeConfig.publicKey}')
+    return jsonify(stripeConfig)
+
+@app.route('/donatecu', methods = ['GET', 'POST'])
+def donatecu():
+    form = DonateForm
+    return render_template('donatecu.html', form = form, model = pageModel)
+
+@app.route('/donate', methods = ['GET', 'POST'])
+def donate():
+    # this route does not actually 'checkout'
+    form = DonateForm
+    return render_template('donate.html', form = form, model = pageModel)
+
+@app.route('/create-checkout-session', methods = ['POST'])
+def create_checkout_session():
+    try:
+        dollarAmount = math.floor(float(request.form['amount']))
+        amount = dollarAmount * 100
+        app.logger.info('create-checkout-session AmountPosted:' + str(amount))
+        # domain_url = "http://localhost:5000/"
+        stripe.api_key = stripeKeys["secretKey"]
+        successUrl = url_for('checkout_success', _external = True) + "?session_id={CHECKOUT_SESSION_ID}"
+        cancelUrl = url_for('checkout_cancel', _external = True)
+        app.logger.info(f'SuccessUrl:{successUrl}')
+        app.logger.info(f'CancelUrl:{cancelUrl}')
+        session = stripe.checkout.Session.create(
+            payment_method_types = ['card'],
+            submit_type = 'donate',
+            line_items = [{
+                'price_data': {
+                    'currency': 'usd',
+                    #'type': 'one_time',
+                    'product_data': {
+                        'name': 'One Time Donation'
+                    },
+                    'unit_amount': amount
+                },
+
+                # This, 'price', is configured in the Stripe dashboard. It allows for a one time pament of $10.
+                # 'price': 'price_1ImSLiKkHVDoGTuCUY3oxfKm',
+                'quantity': 1
+            }],
+            mode = 'payment',
+            success_url = successUrl,
+            cancel_url = cancelUrl
+        )
+        # return jsonify({"sessionId": session["id"]})
+        app.logger.info('session ID ' + session.id)
+        return jsonify(id = session.id)
+    except Exception as e:
+        app.logger.error('An exception was thrown creating a stripe checkout sesson. ' + str(e))
+        return jsonify(error=str(e)), 403
+
+@app.route('/checkout-success')
+def checkout_success():
+    successModel = PageTemplate('Thank you!')
+    sessionIdFromStripeSession = request.args.get('session_id')
+    app.logger.info(f'Session ID from URL: "{sessionIdFromStripeSession}"')
+    if(sessionIdFromStripeSession and sessionIdFromStripeSession.strip()):
+        session = stripe.checkout.Session.retrieve(sessionIdFromStripeSession)
+        app.logger.info(f'CustomerId:"{session.customer}"')
+        customer = stripe.Customer.retrieve(session.customer)
+        successModel.customerName = customer.name or customer.email or ""
+        successModel.donationAmount = int(session.amount_total/100)
+
+    return render_template('success.html', model = successModel)
+
+@app.route('/checkout-cancel')
+def checkout_cancel():
+    return render_template('cancel.html', model = pageModel)
+
+@app.route('/create-payment-intent', methods=['POST'])
+def create_payment():
+    try:
+        app.logger.info('In create-payment-intent')
+        app.logger.info(request.data)
+        data = json.loads(request.data)
+        app.logger.info(data)
+        # A PaymentIntent tracks the customer's payment lifecycle, keeping track of any failed payment attempts and ensuring the customer is only charged once.
+        intent = stripe.PaymentIntent.create(
+            amount=calculate_order_amount(data['items']),
+            currency='usd'
+        )
+        # Return the PaymentIntent's client secret in the response to finish the payment on the client.
+        return jsonify({
+            'clientSecret': intent['client_secret']
+        })
+    except Exception as e:
+        app.logger.error('An exception was thrown creating a stripe payment intent. ' + str(e))
+        return jsonify(error=str(e)), 403
+
+def calculate_order_amount(items):
+    # Replace this constant with a calculation of the order's amount
+    # Calculate the order total on the server to prevent
+    # people from directly manipulating the amount on the client
+    return 1986

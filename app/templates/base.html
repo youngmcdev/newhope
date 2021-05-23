@@ -4,11 +4,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
+    <meta name="description" content="New Hope Baptist Church, Allegan, Michigan">
     <title>{{ model.title }}</title>
+    <link rel="icon" type="image/png"  href="{{ url_for('static', filename='nh-icon.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='carousel.css') }}">
     <meta name="theme-color" content="#7952b3">
 
     <style>
@@ -29,47 +31,81 @@
         /* Show the menu is fixed to the top by forcing a min height */
         body {
             min-height: 75rem;
-            padding-top: 4.5rem;
-            /* text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5); */
+            /* padding-top: 56px; */
+            text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
             box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
         }
 
+        .nh-main{
+            
+        }
+
         .nh-container {
-            position: relative; 
-            height: 100vh;
-            width: 100%;
-            /* display: flex; */
-            align-items: center;
-            justify-content: center;
+            
         }
 
         .nh-container::before {    
-            content: "";
-            background-image: url('bible-on-rock.jpg');
-            background-size: cover;
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            bottom: 0px;
-            left: 0px;
-            opacity: 0.45;
+            
         }
 
         .nh-content {
-            position: relative;
-            color: #000;  
-            /* font-size: 14rem;
-            line-height: 0.9;
-            text-align: center; */
+            
+        }
+
+
+        .nh-page-first-row{
+            background-repeat: no-repeat;
+            background-position: top right;
+            background-attachment: scroll;
+            background-size: cover;
+            min-height: 300px;
+            color: white;
+        }
+        .nh-page-first-row h1{
+            font-variant: small-caps;
+        }
+        .nh-page-first-row1{
+            background-image: url('{{ url_for("static", filename="church2.jpg") }}');
+            min-height: 600px;
+        }
+        .nh-page-first-row2{
+            background-image: url('{{ url_for("static", filename="clouds-n-canyon.jpg") }}');
+        }
+
+        .nh-page-first-row3{
+            background-image: url('{{ url_for("static", filename="clouds-n-mountains.jpg") }}');
+        }
+
+        .nh-page-first-row2 h1, .nh-page-first-row3 h1{
+            font-variant: small-caps;
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        .nh-navbar{
+            background-image: url('{{ url_for("static", filename="logo-trans-56.png") }}');
+            background-repeat: no-repeat;
+            background-attachment: scroll;
+        }
+
+        .nh-h4{
+            font-weight: 500;
+            font-size: 1.25rem;
+            line-height: 1.2;
+        }
+
+        .nh-center{
+            text-align: center;
         }
     </style>
 
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container">
+    <nav class="navbar navbar-expand-sm navbar-light fixed-topz bg-lightz rounded nh-navbar">
         <div class="container-fluid">
-            <a id="home-icon" class="navbar-brand" href="{{ url_for('index') }}">{{ model.title }}</a>
+            <a id="home-icon" class="navbar-brand" href="{{ url_for('index') }}" style="width:100px"><span>&nbsp;</span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -77,35 +113,60 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link" data-id="index" href="{{ url_for('index') }}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-id="services" href="{{ url_for('services') }}">When We Meet</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-id="introduction" href="{{ url_for('introduction') }}">Introduction</a>
+                        <a class="nav-link" data-id="introduction" href="{{ url_for('introduction') }}">About</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-id="messages" href="{{ url_for('messages') }}">Messages</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" data-id="live" href="{{ url_for('live') }}">Live</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-id="services" href="{{ url_for('services') }}">Visit&nbsp;Us</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" data-id="events" href="{{ url_for('events') }}">Events</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-id="donate" href="{{ url_for('donate') }}">Donate</a>
+                        <a class="nav-link" data-id="give" href="{{ url_for('donate') }}">Giving</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-
-    <main class="container">
-        {% block content %}{% endblock %}
-    </main>
+    </div>
+    <div id="main-div" class="nh-main">
+        <main id="main-container" class="container nh-container">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
     <br />
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div id="flash-message-row" class="container row">
+        <div class="col-12">
+            <dl>
+                <dt>Flash Messages</dt>
+                {% for message in messages %}
+                <dd>{{ message }}</dd>
+                {% endfor %}
+            </dl>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
     <footer class="mt-auto text-center">
-        Footer Content
-        <!-- <a href="https://drive.google.com/drive/folders/1dais_I2TbJDMVqlLeokcU_DUZPyf6Khp?usp=sharing">Google Drive Folder</a> -->
+            <div class="">
+                <p>
+                    <a href="https://www.facebook.com/New-Hope-Baptist-Church-275299755925613/">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
+                            <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+                        </svg>
+                    </a>
+                </p>
+                <p style="text-align:center;white-space:pre-wrap;">Contact Us: 269.673.1938 | info@nhbcallegan.com<br>©2021 New Hope Baptist Church. All rights reserved.
+                </p>
+            </div>
     </footer>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -114,6 +175,22 @@
 
 
 <script>
+    var nhdata = {
+        fetchStatus: function(response){
+            if(response.status >= 200 && response.status < 300){
+                console.log({FetchResponse:response});
+                return Promise.resolve(response);
+            }
+            else{
+                return Promise.reject(new Error('Fetch Error! Status:' + response.status + ' - ' + response.statusText));
+            }
+        },
+        fetchJson: function(response){
+            console.log({FetchJsonData:response});
+            return response.json();
+        }
+    };
+
     $(document).ready(function () {
         var titleElement = $('main h1');
         var bodyElement = $('main p.nh-body');
@@ -125,27 +202,10 @@
 
         links.removeClass('active');
         currentMenuItem.addClass('active');
-        //console.log(requestEndpoint);
-
-        switch(requestEndpoint){
-                case 'services':
-                    break;
-                case 'introduction':
-                    break;
-                case 'sermons':
-                    break;
-                case 'events':
-                    break;
-                case 'donate':
-                    break;
-                default:
-                    break;
-            }
 
         $('a.nav-link').on('click', function(obj){
-            //toggler.click();
-            var targetUrl = $(obj.target).attr('href');
             $('.navbar-collapse').collapse('hide');
+            var targetUrl = $(obj.target).attr('href');
             
             if($('nav.navbar button.navbar-toggler').is(':visible')){
                 setTimeout(function(){location.href = targetUrl}, 200);

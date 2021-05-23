@@ -2,7 +2,7 @@
 <!--To view this file, download free mind mapping software Freeplane from http://freeplane.sourceforge.net -->
 <node TEXT="Python Project" FOLDED="false" ID="ID_1978471855" CREATED="1617224207017" MODIFIED="1617224216396" STYLE="oval">
 <font SIZE="18"/>
-<hook NAME="MapStyle" background="#3c3f41" zoom="1.331">
+<hook NAME="MapStyle" background="#3c3f41">
     <properties fit_to_viewport="false" edgeColorConfiguration="#808080ff,#00ddddff,#dddd00ff,#dd0000ff,#00dd00ff,#dd0000ff,#7cddddff,#dddd7cff,#dd7cddff,#7cdd7cff,#dd7c7cff,#7c7cddff"/>
 
 <map_styles>

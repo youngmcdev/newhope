@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Display a payment form -->
+<div id="donate-row" class="row p-3 rounded">
+    <div class="col-12">
+        <form id="payment-form">
+            <div id="card-element">
+                <!--Stripe.js injects the Card Element-->
+            </div>
+            <button id="submit">
+                <div class="spinner hidden" id="spinner"></div>
+                <span id="button-text">Pay now</span>
+            </button>
+            <p id="card-error" role="alert"></p>
+            <p class="result-message hidden">
+                Payment succeeded, see the result in your
+                <a href="" target="_blank">Stripe dashboard.</a> Refresh the page to pay again.
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<link rel="stylesheet" href="{{ url_for('static', filename='donate.css') }}" />
+<script src="https://js.stripe.com/v3/"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
+<script src="{{ url_for('static', filename='donate.js') }}" defer></script>
+<script>
+
+</script>
+{% endblock %}

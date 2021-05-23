@@ -4,3 +4,13 @@ venv/
 __pycache__/
 *.py[cod]
 *$py.class
+# VS code
+.vscode/
+# Gimp
+*.xcf
+# images
+*.png
+*.jpg
+*.log
+setenv.bat
+grep.txt

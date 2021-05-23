@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row p-3 rounded">
+    <div class="col-12 nh-center" >
+        <h1><i class="bi bi-stoplights" style="font-size: 2rem; color: rgb(209, 58, 38); padding-right:5px;"></i>An unexpected error has occurred</h1>
+        <p>The administrator has been notified. Sorry for the inconvenience!</p>
+        <p><a href="{{ url_for('index') }}">Back</a></p>
+    </div>
+</div>
+{% endblock %}
