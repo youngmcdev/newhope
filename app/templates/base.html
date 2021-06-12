@@ -22,12 +22,6 @@
             user-select: none;
         }
 
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
-        }
-
         /* Show the menu is fixed to the top by forcing a min height */
         body {
             min-height: 75rem;
@@ -52,8 +46,8 @@
             
         }
         
-        .nh-accent-text{
-            font-size: 1.2rem;
+        .nh-accent-text-sm, .nh-accent-text{
+            font-size: 1rem;
         }
 
         .nh-page-first-row{
@@ -99,6 +93,46 @@
 
         .nh-center{
             text-align: center;
+        }
+
+        .nh-video-container{
+            position: relative;
+            overflow: hidden;
+            padding-top: 56.25%;
+        }
+
+        .nh-video-element{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        @media (min-width: 576px) {}
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+            .nh-accent-text-sm, .nh-accent-text{
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (min-width: 992px) {}
+
+        @media (min-width: 1200px) {
+            .nh-accent-text{
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .nh-accent-text{
+                font-size: 1.4rem;
+            }
         }
     </style>
 

@@ -24,6 +24,7 @@ from logging.handlers import RotatingFileHandler
 # 3) Set the FLASK_APP environment variable "set FLASK_APP=<name_of_python_file>" example "set FLASK_APP=newhope.py"
 #        Note: This is being done via the .flaskenv file
 # 4) Set any environment variables needed by the application.
+#        Note: There should be a batch file to do this, but that will not be in the repo.
 # 5) Execute "flask run"
 
 # Activate environment one server
