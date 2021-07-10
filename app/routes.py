@@ -15,6 +15,7 @@ from logging.handlers import RotatingFileHandler
 # 3) Install Flask via "pip install flask"
 # 4) Install Stripe via "pip install --upgrade stripe"
 # 5) If the files .env or .flaskenv are being used, then execute "pip install python-dotenv"
+# 5.1) pip intall flask-wtf
 # 6) Execute "flask run"
 
 # To start the application (assuming the environment has been setup after cloning the repo):
@@ -23,6 +24,7 @@ from logging.handlers import RotatingFileHandler
 # 3) Set the FLASK_APP environment variable "set FLASK_APP=<name_of_python_file>" example "set FLASK_APP=newhope.py"
 #        Note: This is being done via the .flaskenv file
 # 4) Set any environment variables needed by the application.
+#        Note: There should be a batch file to do this, but that will not be in the repo.
 # 5) Execute "flask run"
 
 # Activate environment one server
@@ -91,7 +93,8 @@ def donateco():
 @app.route("/donateco-config")
 def get_publishable_key():
     stripeConfig = {"publicKey": stripeKeys["publishableKey"]}
-    app.logger.info(f'Getting the publishable key {stripeConfig.publicKey}')
+    # MCY - fix this bug - seem to be referencing publicKey incorrectly
+    # app.logger.info(f'Getting the publishable key {stripeConfig.publicKey}')
     return jsonify(stripeConfig)
 
 @app.route('/donatecu', methods = ['GET', 'POST'])

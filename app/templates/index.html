@@ -1,21 +1,67 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+    .nh-title{
+        font-size: 2.5rem; 
+        font-weight: 500; 
+        margin-top: 1rem;
+    }
+    .nh-call-answer{
+        margin-left: auto; 
+        margin-right: auto; 
+        width:350px; 
+        padding-right: 0;
+        padding-left: 5px;
+        /* border: 1px solid black; */
+    }
+    .nh-call{
+        font-family: rollerscript-rough, cursive;
+        color: #ffa42e;
+        font-size: 1.5em;
+    }
+    .nh-answer{
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        font-size: 1em;
+    }
+</style>
 <div class="row p-3 rounded nh-page-first-row nh-page-first-row1">
-    <div class="col-lg-3 col-sm-2 col-xs-12"></div>
-    <div class="col-lg-9 col-sm-10 col-xs-12">
-        <h1>New Hope Baptist Church</h1>
+    <div class="col-12 nh-center"><div class="nh-title">New Hope Baptist Church</div></div>
+    <div class="col-sm-10 offset-sm-2 nh-call-answer">
         <h2>
-            At quis risus sed vulputate odio ut.<br />Cras ornare arcu dui vivamus arcu felis bibendum ut
-            tristique.<br />Sit amet massa vitae tortor condimentum lacinia quis vel.
+            <span class="nh-call">Trust</span> <span class="nh-answer">in God</span>
+            <br /><span class="nh-call" style="padding-left: 40px;"> Share</span> <span class="nh-answer">His Love</span>
+            <br /><span class="nh-call" style="padding-left: 80px;">Grow</span> <span class="nh-answer">in Christ</span>
+            <br /><span class="nh-call">Serve</span> <span class="nh-answer">with Grace</span>
         </h2>
-        <a href="{{ url_for('services') }}" class="btn btn-primary">Visit Us This Sunday</a>
+        <div style="padding-top:20px;">
+            <a href="{{ url_for('services') }}" class="btn btn-primary">Visit Us This Sunday</a>
+        </div>
     </div>
 </div>
 <div class="row p-3">
     <div class="col-xl-9 col-sm-7 col-xs-12">
-        <h2>Welcome!</h2>
-        <p class="nh-body">Integer malesuada nunc vel risus commodo. Ornare arcu dui vivamus arcu felis bibendum ut tristique. Nascetur ridiculus mus mauris vitae ultricies leo integer malesuada. Congue mauris rhoncus aenean vel elit scelerisque mauris pellentesque pulvinar. Tincidunt arcu non sodales neque sodales ut etiam sit amet. Nulla aliquet enim tortor at auctor urna. Imperdiet proin fermentum leo vel orci porta non pulvinar. Felis eget nunc lobortis mattis aliquam faucibus purus. Ornare aenean euismod elementum nisi quis eleifend quam. Eleifend donec pretium vulputate sapien nec sagittis. Et netus et malesuada fames. Aliquam nulla facilisi cras odio eu.</p>
+        <p>
+            <span class="nh-accent-text">New Hope Baptist is an independent Baptist church seeking to glorify God in all we do.</span> We approach this goal by offering discipleship to all believers, proclaiming the good news of salvation in Jesus Christ, and ministering to the needs of those around us. 
+        </p>
+        <p>
+            Our church is a wonderful cross section of age groups from infants to senior saints. We strive to meet the spiritual needs of all ages through our ministries. Please feel free to contact us with any questions you may have concerning our ministries or your spiritual needs.
+        </p>
+        <h2>A welcome from our Pastor</h2>
+        <p class="nh-body">
+            Thank you for taking the time to visit! We are delighted to have you as a guest at our site.  I trust that it will be helpful to you in seeking more information about the ministry the Lord has allowed us to have here.
+        </p>
+        <p>
+            <span class="nh-accent-text">We believe that God’s Word provides the only solid foundation on which to build our lives and that God has a purpose for every life.</span> It is our desire to have a Christ-centered ministry, to see people come to know the Lord Jesus Christ as their personal Savior, and to assist them in becoming actively involved in a Bible-believing, Bible-preaching church that cares for their family.
+        </p>
+        <p>
+             If we can be of any assistance please don’t hesitate to call, you may contact me at any time. I would like to extend a personal invitation for you to “Come to New Hope and See the Difference”!
+        </p>
+        <p>
+            Tadd Butler
+            <br />Pastor
+        </p>
         <a href="{{ url_for('services') }}" class="btn btn-primary">Visit Us This Sunday</a>
+        <hr />
     </div>
     <div class="col-xl-3 col-sm-5 col-xs-12">
         <h4>Weekly Gatherings</h4>
