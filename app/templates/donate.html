@@ -50,7 +50,7 @@
         </div>
         <div id="modal-body" class="modal-body">&nbsp;</div>
         <div class="modal-footer">
-          <button id="modal-close-bth" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button id="modal-close-btn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <button id="modal-accept-btn" type="button" class="btn btn-primary">OK</button>
         </div>
       </div>
@@ -68,7 +68,7 @@
         DonateCoModule.init();
         var giveButton = document.getElementById('give-button');
         var amountInput = document.getElementById('amount');
-        var modalButton = document.getElementById('modal-accept-btn');
+        var modalButtonConfirm = document.getElementById('modal-accept-btn');
         var modalBody = $('#modal-body');
         var modalTitle = $('#modal-title');
         
@@ -98,6 +98,8 @@
             amount = parseInt(amount) || '';
             amountTb.val((amount.toString().length > 0 ? amount + '.00' : ''));
         });
+
+        //modalButtonConfirm.addEventListener('click', function(event){DonateCoModule.redirectToCheckout(event, amountInput);});
     });
 </script>
 {% endblock %}

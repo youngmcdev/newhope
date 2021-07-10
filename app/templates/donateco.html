@@ -29,33 +29,77 @@
 <div class="row p-3 rounded">
     <div class="col-sm-2 col-lg-3"></div>
     <div class="col-sm-8 col-lg-6">
-        <p id="give-section" style="color: #0d6efd; font-weight: 600;">Enter a whole-dollar amount and click <em>Give Now</em> to go to our secure processing page. By clicking <em>Give Now</em> you are <b>not</b> confirming a payment. You will have an opportunity to enter your payment method details and review your transaction.</p>
+        <p id="give-section" style="color: #0d6efd; font-weight: 600;">Enter a <em>whole-dollar</em> amount and click <em>Give Now</em> to go to our secure processing page. By clicking <em>Give Now</em> you are <b>not</b> confirming a payment. You will have an opportunity to enter your payment method details and review your transaction.</p>
         <div class="input-group mb-3">
-            <input id="amount" name="amount" type="number" class="form-control" placeholder="$0" onkeypress="javascript: return DonateCoModule.isNumber(event)">
+            <input id="amount" name="amount" type="number" class="form-control" placeholder="$0">
             <div class="input-group-append">
-              <button class="btn btn-primary" id="give-button" name="give-button" type="button">Give Now</button>
+              <button class="btn btn-primary" id="give-button" name="give-button" type="button" disabled data-bs-toggle="modal" data-bs-target="#staticBackdrop">Give Now</button>
             </div>
         </div>
         
     </div>
     <div class="col-sm-2 col-lg-3"></div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="modal-title" class="modal-title" id="staticBackdropLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="modal-body" class="modal-body">&nbsp;</div>
+        <div class="modal-footer">
+          <button id="modal-close-btn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button id="modal-accept-btn" type="button" class="btn btn-primary">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 {% block scripts %}
-<!-- <link rel="stylesheet" href="{{ url_for('static', filename='donate.css') }}" /> -->
 <script src="https://js.stripe.com/v3/"></script>
-<!-- <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script> -->
 <script src="{{ url_for('static', filename='donateco.js') }}" defer></script>
 <script>
     nhdata.configUrl = '{{ url_for("get_publishable_key") }}';
     nhdata.checkoutUrl = '{{ url_for("create_checkout_session") }}';
-    //redirect for donate.html
-    //modalButton.addEventListener('click', function(event){DonateCoModule.redirectToCheckout(event, amountInput);});
+    
     $(document).ready(function(){
         DonateCoModule.init();
         var giveButton = document.getElementById('give-button');
         var amountInput = document.getElementById('amount');
-        giveButton.addEventListener('click', function(event){DonateCoModule.redirectToCheckout(event, amountInput);});
+        var modalButtonConfirm = document.getElementById('modal-accept-btn');
+        var modalBody = $('#modal-body');
+        var modalTitle = $('#modal-title');
+        
+        giveButton.addEventListener('click', function(event){
+            var msg = `<p>Click <em>OK</em> to enter your payment method for <b>$${$(amountInput).val()}</b>. Click <em>Cancel</em> to enter a different amount.</p><p>In production this will take you to the processing page where you enter your payment method.</p>`;
+            modalBody.html(msg);
+            modalTitle.text('Confirm');
+        });
+
+        // Add event for redirect
+
+        amountInput.addEventListener('input', function(event){
+            var amountTb = $(event.target);
+            var amount = amountTb.val() || '';
+            amount = amount.replace(/[^\d\.]/g,'');
+            amountTb.val(amount);
+            if(amount.length > 0 && parseInt(amount) > 0){
+                $(giveButton).prop('disabled', false);
+            }else{
+                $(giveButton).prop('disabled', true);
+            }
+        });
+
+        amountInput.addEventListener('blur', function(event){
+            var amountTb = $(event.target);
+            var amount = amountTb.val() || '';
+            amount = parseInt(amount) || '';
+            amountTb.val((amount.toString().length > 0 ? amount + '.00' : ''));
+        });
+
+        modalButtonConfirm.addEventListener('click', function(event){DonateCoModule.redirectToCheckout(event, amountInput);});
     });
 </script>
 {% endblock %}
