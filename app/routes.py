@@ -41,7 +41,8 @@ googleApiKey = os.environ.get('GOOGLE_API_KEY') or 'my-google-api-key'
 class PageTemplate:
     def __init__(self, title):
         self.title = title
-        self.customerName = 'John Doe'
+        self.customerName = ''
+        self.customerEmail = ''
         self.donationAmount = 0
         self.googleApiKey = googleApiKey
 
@@ -157,6 +158,7 @@ def checkout_success():
         session = stripe.checkout.Session.retrieve(sessionIdFromStripeSession)
         app.logger.info(f'CustomerId:"{session.customer}"')
         customer = stripe.Customer.retrieve(session.customer)
+        successModel.customerEmail = customer.email or ""
         successModel.customerName = customer.name or customer.email or ""
         successModel.donationAmount = int(session.amount_total/100)
 

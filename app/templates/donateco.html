@@ -73,7 +73,7 @@
         var modalTitle = $('#modal-title');
         
         giveButton.addEventListener('click', function(event){
-            var msg = `<p>Click <em>OK</em> to enter your payment method for <b>$${$(amountInput).val()}</b>. Click <em>Cancel</em> to enter a different amount.</p><p>In production this will take you to the processing page where you enter your payment method.</p>`;
+            var msg = `<p>Click <em>OK</em> to confirm the amount of <b>$${$(amountInput).val()}</b>. You will then be brought to the check-out page.<br \><br \>Click <em>Cancel</em> to enter a different amount.</p>`;
             modalBody.html(msg);
             modalTitle.text('Confirm');
         });
