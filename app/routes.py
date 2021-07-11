@@ -3,9 +3,10 @@ import os
 import math
 import stripe
 from flask import Flask, url_for, render_template, jsonify, request, flash, redirect
-from app import app
+from app import app, db
 from app.forms import LoginForm, DonateForm
-from datetime import datetime, date, time
+from app.models import VideoMessage
+from datetime import datetime, date, time, timezone
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -16,6 +17,8 @@ from logging.handlers import RotatingFileHandler
 # 4) Install Stripe via "pip install --upgrade stripe"
 # 5) If the files .env or .flaskenv are being used, then execute "pip install python-dotenv"
 # 5.1) pip intall flask-wtf
+# 5.2) pip install flask-sqlalchemy
+# 5.3) pip install flask-migrate NOTE: We're not usingt this yet. It's safe to ignore
 # 6) Execute "flask run"
 
 # To start the application (assuming the environment has been setup after cloning the repo):
@@ -25,7 +28,13 @@ from logging.handlers import RotatingFileHandler
 #        Note: This is being done via the .flaskenv file
 # 4) Set any environment variables needed by the application.
 #        Note: There should be a batch file to do this, but that will not be in the repo.
+# 4.1) The database may need to be initialized. From the python interpreter...
+# 4.1.1) from app import db
+# 4.1.2) db.create_all()
 # 5) Execute "flask run"
+
+# Generate requirements file: pip freeze > requirements.txt
+# Install requirementns: pip install -r requirements.txt
 
 # Activate environment one server
 # source /home/nhbcalle/virtualenv/proj/newhopebeta/3.8/bin/activate && cd /home/nhbcalle/proj/newhopebeta
@@ -45,6 +54,22 @@ class PageTemplate:
         self.customerEmail = ''
         self.donationAmount = 0
         self.googleApiKey = googleApiKey
+        self.messages = []
+
+class Message:
+    def __init__(self, id = 0):
+        self.id = id
+        self.title = ''
+        self.description = ''
+        self.youtube_id = ''
+        self.timestamp = datetime.now(timezone.utc)
+        self.image_file = ''
+        self.image_description = ''
+
+class Image:
+    def __init__(self, filename = '', description = ''):
+        self.filename = filename
+        self.description = description
 
 pageModel = PageTemplate('New Hope Baptist Church')
 
@@ -67,6 +92,16 @@ def introduction():
 
 @app.route('/messages')
 def messages():
+    messageList = VideoMessage.query.order_by(VideoMessage.timestamp.desc()).limit(3).all()
+    imageList = GetImages()
+    index = 0
+    app.logger.info(f'{len(messageList)} video message were retrieved to display.')
+
+    pageModel.messages.clear()
+    for message in messageList:
+        pageModel.messages.append(MapMessage(index, message, imageList[index]))
+        index = index + 1
+    
     return render_template('messages.html', model = pageModel)
 
 @app.route('/live')
@@ -193,3 +228,16 @@ def calculate_order_amount(items):
     # Calculate the order total on the server to prevent
     # people from directly manipulating the amount on the client
     return 1986
+
+def MapMessage(id: int, message: VideoMessage, image: Image) -> Message:
+    result = Message(id)
+    result.title = message.title
+    result.timestamp = message.timestamp
+    result.description = message.description
+    result.youtube_id = message.youtube_id
+    result.image_file = image.filename
+    result.image_description = image.description
+    return result
+
+def GetImages():
+    return [Image('storm.jpg', 'Storm'), Image('man-walking-with-bag.jpg', 'Walking Man'), Image('bible-on-rock.jpg', 'Bible')]

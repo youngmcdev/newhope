@@ -18,39 +18,20 @@
         <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2"></button>
     </div>
     <div class="carousel-inner rounded">
-        <div class="carousel-item active">
-            <img src="{{ url_for('static', filename='storm.jpg') }}" class="d-block w-100" alt="Storm" />
-
-			<div class="container">
-                <div class="carousel-caption text-start">
-                    <h1>4 July 2021</h1>
-                    <h5>Evangelist Danny Long</h5>
-                    <p><a class="btn btn-lg btn-primary nh-watch-btn" data-url="https://www.youtube.com/embed/X_tZxywMJWM" href="#">Watch</a></p>
-                </div>
-            </div>
-        </div>
-        <div class="carousel-item"> 
-            <img src="{{ url_for('static', filename='man-walking-with-bag.jpg') }}" class="d-block w-100" alt="Walking Man" />
-
+        {% for message in model.messages %}
+        <div class="carousel-item {{ 'active' if message.id == 0 else '' }}"> 
+            <img src="{{ url_for('static', filename=message.image_file) }}" class="d-block w-100" alt="{{ message.image_description }}" />
+            <input type="hidden" id="message-id" value="{{message.id}}" />
             <div class="container">
-                <div class="carousel-caption">
-                    <h1>27 June 2021</h1>
-                    <h5>Them That Dwell On the Earth</h5> 
-                    <p><a class="btn btn-lg btn-primary nh-watch-btn" data-url="https://www.youtube.com/embed/_xTc7RHmISE" href="#">Watch</a></p>
+                <div class="carousel-caption {{ 'text-start' if message.id == 0 else ('text-end' if message.id == (model.messages|length - 1) else '') }} ">
+                    <h1>{{ message.timestamp.strftime('%d %b %Y') }}</h1>
+                    <h5>{{ message.title }}</h5>
+                    <!-- <h6>{{ message.description }}</h6> MCY - I'd like to work this in. -->
+                    <p><a class="btn btn-lg btn-primary nh-watch-btn" data-url="https://www.youtube.com/embed/{{ message.youtube_id }}" href="#">Watch</a></p>
                 </div>
             </div>
         </div>
-        <div class="carousel-item">
-            <img src="{{ url_for('static', filename='bible-on-rock.jpg') }}" class="d-block w-100" alt="Bible" />
-
-            <div class="container">
-                <div class="carousel-caption text-end">
-                    <h1>20 June 2021</h1>
-                    <h5>Jairus Besought Him Greatly</h5>
-                    <p><a class="btn btn-lg btn-primary nh-watch-btn" data-url="https://www.youtube.com/embed/w4c74k2BKUc" href="#">Watch</a></p>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
