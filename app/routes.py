@@ -36,7 +36,7 @@ from logging.handlers import RotatingFileHandler
 # Generate requirements file: pip freeze > requirements.txt
 # Install requirementns: pip install -r requirements.txt
 
-# Activate environment one server
+# Example: Activate environment on server
 # source /home/nhbcalle/virtualenv/proj/newhopebeta/3.8/bin/activate && cd /home/nhbcalle/proj/newhopebeta
 
 # stripe help: https://testdriven.io/blog/flask-stripe-tutorial/
@@ -150,12 +150,14 @@ def create_checkout_session():
         dollarAmount = math.floor(float(request.form['amount']))
         amount = dollarAmount * 100
         app.logger.info('create-checkout-session AmountPosted:' + str(amount))
-        # domain_url = "http://localhost:5000/"
         stripe.api_key = stripeKeys["secretKey"]
+        # This is set in the Stripe dashboard. However, we can override that here
+        stripe.api_version = '2020-08-27'
         successUrl = url_for('checkout_success', _external = True) + "?session_id={CHECKOUT_SESSION_ID}"
         cancelUrl = url_for('checkout_cancel', _external = True)
         app.logger.info(f'SuccessUrl:{successUrl}')
         app.logger.info(f'CancelUrl:{cancelUrl}')
+
         session = stripe.checkout.Session.create(
             payment_method_types = ['card'],
             submit_type = 'donate',
@@ -164,7 +166,9 @@ def create_checkout_session():
                     'currency': 'usd',
                     #'type': 'one_time',
                     'product_data': {
-                        'name': 'One Time Donation'
+                        'name': 'One Time Donation',
+                        'description': 'Thank you for your contribution!', # long form description of the product
+                        'images': ['https://www.nhbcallegan.com/static/logo-white-sq.png'] # upto 8 URLs to images
                     },
                     'unit_amount': amount
                 },
@@ -177,9 +181,14 @@ def create_checkout_session():
             success_url = successUrl,
             cancel_url = cancelUrl
         )
-        # return jsonify({"sessionId": session["id"]})
-        app.logger.info('session ID ' + session.id)
-        return jsonify(id = session.id)
+        app.logger.info(f'Session Object: {session}')
+
+        sessionId = ''
+        if(session):
+            app.logger.info(f'session ID {session.id}')
+            sessionId = session.id
+
+        return jsonify(id = sessionId)
     except Exception as e:
         app.logger.error('An exception was thrown creating a stripe checkout sesson. ' + str(e))
         return jsonify(error=str(e)), 403
@@ -190,11 +199,17 @@ def checkout_success():
     sessionIdFromStripeSession = request.args.get('session_id')
     app.logger.info(f'Session ID from URL: "{sessionIdFromStripeSession}"')
     if(sessionIdFromStripeSession and sessionIdFromStripeSession.strip()):
+        app.logger.info('Attempt to get a session from Stripe for the session ID.')
         session = stripe.checkout.Session.retrieve(sessionIdFromStripeSession)
-        app.logger.info(f'CustomerId:"{session.customer}"')
+        app.logger.info(f'Session object: {session}')
+        app.logger.info(f'Attempt to get a customer object from Stripe for CustomerId:"{session.customer}"')
         customer = stripe.Customer.retrieve(session.customer)
-        successModel.customerEmail = customer.email or ""
-        successModel.customerName = customer.name or customer.email or ""
+        app.logger.info(f'Customer object: {customer}')
+        
+        if(customer):
+            successModel.customerEmail = customer.email or ''
+            successModel.customerName = customer.name or customer.email or ''
+
         successModel.donationAmount = int(session.amount_total/100)
 
     return render_template('success.html', model = successModel)
