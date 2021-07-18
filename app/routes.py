@@ -1,12 +1,16 @@
 import json
+from operator import and_
 import os
 import math
+import time
+from re import template
+from config import Config
 import stripe
 from flask import Flask, url_for, render_template, jsonify, request, flash, redirect
 from app import app, db
-from app.forms import LoginForm, DonateForm
+from app.forms import LoginForm, DonateForm, AddMessageForm
 from app.models import VideoMessage
-from datetime import datetime, date, time, timezone
+from datetime import datetime, date, timezone
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -59,6 +63,7 @@ class PageTemplate:
 class Message:
     def __init__(self, id = 0):
         self.id = id
+        self.sequence = 0
         self.title = ''
         self.description = ''
         self.youtube_id = ''
@@ -92,16 +97,16 @@ def introduction():
 
 @app.route('/messages')
 def messages():
-    messageList = VideoMessage.query.order_by(VideoMessage.timestamp.desc()).limit(3).all()
-    imageList = GetImages()
-    index = 0
-    app.logger.info(f'{len(messageList)} video message were retrieved to display.')
+    # messageList = VideoMessage.query.order_by(VideoMessage.timestamp.desc()).limit(3).all()
+    # imageList = GetImages()
+    # index = 0
+    # app.logger.info(f'{len(messageList)} video message were retrieved to display.')
 
-    pageModel.messages.clear()
-    for message in messageList:
-        pageModel.messages.append(MapMessage(index, message, imageList[index]))
-        index = index + 1
-    
+    # pageModel.messages.clear()
+    # for message in messageList:
+    #     pageModel.messages.append(MapMessage(index, message, imageList[index]))
+    #     index = index + 1
+    pageModel.messages = GetMessages(3, True)
     return render_template('messages.html', model = pageModel)
 
 @app.route('/live')
@@ -238,21 +243,148 @@ def create_payment():
         app.logger.error('An exception was thrown creating a stripe payment intent. ' + str(e))
         return jsonify(error=str(e)), 403
 
+@app.route('/update-message', methods=['GET','POST'])
+def update_message():
+    form = AddMessageForm(request.form)
+
+    if form.validate_on_submit() and app.config['DATA_SECRET'] == form.password.data and app.config['DATA_SECRET'] != 'beriberi':
+        messageId = int(form.id.data)
+        app.logger.info(f'Form validated. Message ID: {messageId}')
+        message = VideoMessage.query.filter_by(id = messageId).first()
+        if bool(message):
+            app.logger.info(f'Update message: {message}')
+            dateToStore = GetDateToStore(form.date.data, form.is_am_service.data == 'am')
+            app.logger.info(f'Message date: {dateToStore}')
+            message.title = form.title.data
+            message.description = form.description.data
+            message.timestamp = dateToStore
+            message.youtube_id = form.youtube_id.data
+            db.session.commit()
+        else:
+            app.logger.info('Could not find the message to update.')
+
+        return redirect(url_for('list_messages'))
+    else:
+        app.logger.info(f'The form did not validate. FormMethod:{request.method}')
+
+    if request.method == 'GET':
+        messageId = int(request.args['id'])
+        app.logger.info(f'Message ID: {messageId}')
+        message = VideoMessage.query.filter_by(id = messageId).first()
+        app.logger.info(f'Display message: {message}')
+        if bool(message):
+            form.id.data = messageId
+            form.title.data = message.title
+            form.description.data = message.description
+            form.date.data = message.timestamp
+            form.youtube_id.data = message.youtube_id
+
+    return render_template(
+        'update_message.html',
+        model = pageModel,
+        form = form
+    )
+
+@app.route('/add-message', methods=['GET', 'POST'])
+def add_message():
+    if request.method != 'POST':
+        app.logger.info(f'This is not a POST: {request.method}')
+
+    #app.logger.info(request.form)
+    form = AddMessageForm(request.form)
+    #app.logger.info(f'value passed in {form.password.data}')
+    if form.validate_on_submit() and app.config['DATA_SECRET'] == form.password.data and app.config['DATA_SECRET'] != 'beriberi':
+        # Add message
+        app.logger.info('This is a POST and the form was validated.')
+        dateToStore = GetDateToStore(form.date.data, form.is_am_service.data == 'am')
+        app.logger.info(f'Message date: {dateToStore}')
+        messageToStore = VideoMessage(title=form.title.data, description=form.description.data, youtube_id=form.youtube_id.data, timestamp=dateToStore)
+        app.logger.info(messageToStore)
+        db.session.add(messageToStore)
+        db.session.commit()
+        return redirect(url_for('list_messages'))
+    else:
+        app.logger.info(f'The form did not validate. FormMethod:{request.method}')
+        
+    # Get message data and return it
+    # return render_template('login.html', title='Sign In', form=form, model = pageModel)
+    app.logger.info('Go to Add Message page.')
+    return render_template(
+        'add_message.html',
+        model = pageModel,
+        form = form
+    )
+
+def GetDateToStore(date: date, isAmService: bool) -> datetime:
+    if not bool(date):
+        return datetime.utcnow()
+        
+    offsetHours = math.floor(abs(time.localtime().tm_gmtoff / (60*60)))
+    hour = (10 if isAmService else 18) + offsetHours # 10am or 6pm plus offset
+    return datetime(date.year, date.month, date.day, hour, 45, 0)
+
+@app.route('/delete-message', methods=['GET'])
+def delete_message():
+    youtubeId = request.args["id"]
+    app.logger.info(f'Delete message: {youtubeId}')
+    message = VideoMessage.query.filter_by(youtube_id = youtubeId).first()
+    if bool(message):
+        app.logger.info('Deleting message')
+        db.session.delete(message)
+        db.session.commit()
+    else:
+        app.logger.info('Could not find the message to delete.')
+    return redirect(url_for('list_messages'))
+
+@app.route('/list-messages', methods=['GET'])
+def list_messages():
+    pageModel.messages = GetMessages()
+    return render_template('list_messages.html', model = pageModel)
+
 def calculate_order_amount(items):
     # Replace this constant with a calculation of the order's amount
     # Calculate the order total on the server to prevent
     # people from directly manipulating the amount on the client
     return 1986
 
-def MapMessage(id: int, message: VideoMessage, image: Image) -> Message:
-    result = Message(id)
+def MapMessage(sequence: int, message: VideoMessage, image: Image) -> Message:
+    result = Message(message.id)
     result.title = message.title
     result.timestamp = message.timestamp
     result.description = message.description
     result.youtube_id = message.youtube_id
-    result.image_file = image.filename
-    result.image_description = image.description
+    result.sequence = sequence
+    
+    if bool(image):
+        result.image_file = image.filename
+        result.image_description = image.description
+        
     return result
 
 def GetImages():
     return [Image('storm.jpg', 'Storm'), Image('man-walking-with-bag.jpg', 'Walking Man'), Image('bible-on-rock.jpg', 'Bible')]
+
+def GetMessages(count: int = 0, includeImages: bool = False):
+    messages = []
+    imageList = []
+
+    if bool(count):
+        messageList = VideoMessage.query.order_by(VideoMessage.timestamp.desc()).limit(count).all()
+    else:
+        messageList = VideoMessage.query.order_by(VideoMessage.timestamp.desc()).all()
+
+    if includeImages:
+        imageList = GetImages()
+    
+    index = 0
+    numOfImages = len(imageList)
+    app.logger.info(f'{len(messageList)} video message were retrieved to display.')
+    
+    for message in messageList:
+        messages.append(MapMessage(
+            index, 
+            message, 
+            None if index >= numOfImages else imageList[index])) # Add a default image?
+        index = index + 1
+
+    return messages

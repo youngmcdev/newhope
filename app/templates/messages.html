@@ -19,11 +19,11 @@
     </div>
     <div class="carousel-inner rounded">
         {% for message in model.messages %}
-        <div class="carousel-item {{ 'active' if message.id == 0 else '' }}"> 
+        <div class="carousel-item {{ 'active' if message.sequence == 0 else '' }}"> 
             <img src="{{ url_for('static', filename=message.image_file) }}" class="d-block w-100" alt="{{ message.image_description }}" />
-            <input type="hidden" id="message-id" value="{{message.id}}" />
+            <input type="hidden" id="message-id" value="{{message.sequence}}" />
             <div class="container">
-                <div class="carousel-caption {{ 'text-start' if message.id == 0 else ('text-end' if message.id == (model.messages|length - 1) else '') }} ">
+                <div class="carousel-caption {{ 'text-start' if message.sequence == 0 else ('text-end' if message.sequence == (model.messages|length - 1) else '') }} ">
                     <h1>{{ message.timestamp.strftime('%d %b %Y') }}</h1>
                     <h5>{{ message.title }}</h5>
                     <!-- <h6>{{ message.description }}</h6> MCY - I'd like to work this in. -->

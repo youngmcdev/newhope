@@ -20,4 +20,5 @@ class VideoMessage(db.Model):
         # VideoMessage(title='Another beast coming up out of the earth', description='Revelation 13:11-15', youtube_id='o8ZM5zxqNGc', timestamp=datetime(2021, 6, 6, 14, 45, 0))
         # VideoMessage(title='The Mark of the Beast', description='Revelation 13:16-18', youtube_id='3BBf0TmIMAY', timestamp=datetime(2021, 6, 13, 14, 45, 0))
         # VideoMessage(title='Remember the Lord thy God', description='Deuteronomy 8:10-17', youtube_id='05M_RkGE2Ts', timestamp=datetime(2021, 5, 30, 14, 45, 0))
-        return f'VideoMessage:"{self.title}" Id:{self.id}, Timestamp:{self.timestamp}, YouTubeId:{self.youtube_id}'
+        # insert into video_message(title,description,timestamp,youtube_id) values('The Time Is Come','Revelation 14:14-20','2021-07-11 14:45:00.000','kN6m--IF3Xc');
+        return f'VideoMessage:"{self.title} - {self.description}" Id:{self.id}, Timestamp:{self.timestamp}, YouTubeId:{self.youtube_id}'
