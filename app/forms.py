@@ -23,4 +23,4 @@ class AddMessageForm(FlaskForm):
     is_am_service = SelectField('Morning or eventing service?', [DataRequired()], choices=[('am', 'AM'), ('pm', 'PM')], default='am', render_kw={'class': 'form-select'})
     youtube_id = StringField('YouTube Key', [DataRequired(message='Please supply the key for this video.')], render_kw=style)
     submit = SubmitField('OK', render_kw={'class': 'btn btn-primary'})
-    password = PasswordField('Secret', [DataRequired(message='If you do not have this value please contact your system administrator.'), Length(min=1, max=100, message='This is not valid.')], render_kw=style)
+    password = PasswordField('Confirmation Number', [DataRequired(message='If you do not have this value please contact your system administrator.'), Length(min=8, max=100, message='This is not valid.')], render_kw=style)

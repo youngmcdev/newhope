@@ -247,7 +247,7 @@ def create_payment():
 def update_message():
     form = AddMessageForm(request.form)
 
-    if form.validate_on_submit() and app.config['DATA_SECRET'] == form.password.data and app.config['DATA_SECRET'] != 'beriberi':
+    if form.validate_on_submit() and AuthorizedToUpdate(form.password.data):
         messageId = int(form.id.data)
         app.logger.info(f'Form validated. Message ID: {messageId}')
         message = VideoMessage.query.filter_by(id = messageId).first()
@@ -293,7 +293,7 @@ def add_message():
     #app.logger.info(request.form)
     form = AddMessageForm(request.form)
     #app.logger.info(f'value passed in {form.password.data}')
-    if form.validate_on_submit() and app.config['DATA_SECRET'] == form.password.data and app.config['DATA_SECRET'] != 'beriberi':
+    if form.validate_on_submit() and AuthorizedToUpdate(form.password.data):
         # Add message
         app.logger.info('This is a POST and the form was validated.')
         dateToStore = GetDateToStore(form.date.data, form.is_am_service.data == 'am')
@@ -323,17 +323,24 @@ def GetDateToStore(date: date, isAmService: bool) -> datetime:
     hour = (10 if isAmService else 18) + offsetHours # 10am or 6pm plus offset
     return datetime(date.year, date.month, date.day, hour, 45, 0)
 
+def AuthorizedToUpdate(password: str) -> bool:
+    return app.config['DATA_SECRET'] == password and app.config['DATA_SECRET'] != 'beriberi'
+
 @app.route('/delete-message', methods=['GET'])
 def delete_message():
-    youtubeId = request.args["id"]
-    app.logger.info(f'Delete message: {youtubeId}')
-    message = VideoMessage.query.filter_by(youtube_id = youtubeId).first()
-    if bool(message):
-        app.logger.info('Deleting message')
-        db.session.delete(message)
-        db.session.commit()
+    password = request.args['confNum']
+    if not AuthorizedToUpdate(password):
+        app.logger.info('Not authorized to delete the message.')
     else:
-        app.logger.info('Could not find the message to delete.')
+        youtubeId = request.args["id"]
+        app.logger.info(f'Delete message: {youtubeId}')
+        message = VideoMessage.query.filter_by(youtube_id = youtubeId).first()
+        if bool(message):
+            app.logger.info('Deleting message')
+            db.session.delete(message)
+            db.session.commit()
+        else:
+            app.logger.info('Could not find the message to delete.')
     return redirect(url_for('list_messages'))
 
 @app.route('/list-messages', methods=['GET'])
