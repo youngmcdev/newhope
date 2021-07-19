@@ -76,6 +76,16 @@ class Image:
         self.filename = filename
         self.description = description
 
+class MockStripeSession:
+    def __init__(self):
+        self.customer = MockStripeCustomer()
+        self.amount_total = 0
+
+class MockStripeCustomer:
+    def __init__(self):
+        self.email = ''
+        self.name = ''
+
 pageModel = PageTemplate('New Hope Baptist Church')
 
 @app.route('/')
@@ -192,7 +202,6 @@ def create_checkout_session():
         if(session):
             app.logger.info(f'session ID {session.id}')
             sessionId = session.id
-
         return jsonify(id = sessionId)
     except Exception as e:
         app.logger.error('An exception was thrown creating a stripe checkout sesson. ' + str(e))
@@ -204,12 +213,17 @@ def checkout_success():
     sessionIdFromStripeSession = request.args.get('session_id')
     app.logger.info(f'Session ID from URL: "{sessionIdFromStripeSession}"')
     if(sessionIdFromStripeSession and sessionIdFromStripeSession.strip()):
-        app.logger.info('Attempt to get a session from Stripe for the session ID.')
-        session = stripe.checkout.Session.retrieve(sessionIdFromStripeSession)
-        app.logger.info(f'Session object: {session}')
-        app.logger.info(f'Attempt to get a customer object from Stripe for CustomerId:"{session.customer}"')
-        customer = stripe.Customer.retrieve(session.customer)
-        app.logger.info(f'Customer object: {customer}')
+        app.logger.info(f'Attempt to get a session from Stripe for the session ID.')
+        try:
+            session = stripe.checkout.Session.retrieve(sessionIdFromStripeSession)
+            app.logger.info(f'Session object: {session}')
+            app.logger.info(f'Attempt to get a customer object from Stripe for CustomerId:"{session.customer}"')
+            customer = stripe.Customer.retrieve(session.customer)
+            app.logger.info(f'Customer object: {customer}')
+        except:
+            app.logger.info('An error occured with the Stripe API. We could not retrieve the customer information after the successful payment processing. Returning default data to the view.')
+            session = MockStripeSession()
+            customer = session.customer
         
         if(customer):
             successModel.customerEmail = customer.email or ''
