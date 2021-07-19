@@ -56,7 +56,7 @@
 <script>
     nhdata.configUrl = '{{ url_for("get_publishable_key") }}';
     nhdata.checkoutUrl = '{{ url_for("create_checkout_session") }}';
-    
+
     $(document).ready(function(){
         DonateCoModule.init();
         var giveButton = document.getElementById('give-button');
@@ -96,7 +96,7 @@
             amountTb.val((amount.toString().length > 0 ? amount + '.00' : ''));
         });
 
-        modalButtonConfirm.addEventListener('click', function(event){DonateCoModule.redirectToCheckout(event, amountInput, modalBody);});
+        //modalButtonConfirm.addEventListener('click', function(event){DonateCoModule.redirectToCheckout(event, amountInput, modalBody);});
     });
 </script>
 {% endblock %}
