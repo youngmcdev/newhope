@@ -119,6 +119,10 @@ def messages():
     pageModel.messages = GetMessages(3, True)
     return render_template('messages.html', model = pageModel)
 
+@app.route('/guests')
+def guests():
+    return render_template('guests.html', model = pageModel)
+
 @app.route('/live')
 def live():
     return render_template('live.html', model = pageModel)
