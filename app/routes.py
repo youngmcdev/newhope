@@ -9,7 +9,7 @@ import stripe
 from flask import Flask, url_for, render_template, jsonify, request, flash, redirect
 from app import app, db
 from app.forms import LoginForm, DonateForm, AddMessageForm
-from app.models import VideoMessage
+from app.models import VideoMessage, Speaker
 from datetime import datetime, date, timezone
 import logging
 from logging.handlers import RotatingFileHandler
@@ -68,6 +68,10 @@ class Message:
         self.description = ''
         self.youtube_id = ''
         self.timestamp = datetime.now(timezone.utc)
+        self.is_published = False
+        self.speaker = ''
+        self.speaker_is_guest = False
+        self.speaker_icon_file_name = ''
         self.image_file = ''
         self.image_description = ''
 
@@ -264,6 +268,7 @@ def create_payment():
 @app.route('/update-message', methods=['GET','POST'])
 def update_message():
     form = AddMessageForm(request.form)
+    form.speaker.choices = GetSpeakerList()
 
     if form.validate_on_submit() and AuthorizedToUpdate(form.password.data):
         messageId = int(form.id.data)
@@ -277,6 +282,8 @@ def update_message():
             message.description = form.description.data
             message.timestamp = dateToStore
             message.youtube_id = form.youtube_id.data
+            message.is_published = True if form.is_published.data == '1' else False
+            message.speaker_id = int(form.speaker.data)
             db.session.commit()
         else:
             app.logger.info('Could not find the message to update.')
@@ -292,10 +299,13 @@ def update_message():
         app.logger.info(f'Display message: {message}')
         if bool(message):
             form.id.data = messageId
+            form.is_am_service.data = 'am' if message.timestamp.hour == 14 or message.timestamp.hour == 15 else 'pm'
             form.title.data = message.title
             form.description.data = message.description
             form.date.data = message.timestamp
             form.youtube_id.data = message.youtube_id
+            form.is_published.data = '1' if message.is_published else '0'
+            form.speaker.data = str(message.speaker_id)
 
     return render_template(
         'update_message.html',
@@ -315,8 +325,9 @@ def add_message():
         # Add message
         app.logger.info('This is a POST and the form was validated.')
         dateToStore = GetDateToStore(form.date.data, form.is_am_service.data == 'am')
+        isPublished = True if form.is_published.data == '1' else False
         app.logger.info(f'Message date: {dateToStore}')
-        messageToStore = VideoMessage(title=form.title.data, description=form.description.data, youtube_id=form.youtube_id.data, timestamp=dateToStore)
+        messageToStore = VideoMessage(title=form.title.data, description=form.description.data, youtube_id=form.youtube_id.data, timestamp=dateToStore, speaker_id=int(form.speaker.data), is_published=isPublished)
         app.logger.info(messageToStore)
         db.session.add(messageToStore)
         db.session.commit()
@@ -326,6 +337,7 @@ def add_message():
         
     # Get message data and return it
     # return render_template('login.html', title='Sign In', form=form, model = pageModel)
+    form.speaker.choices = GetSpeakerList()
     app.logger.info('Go to Add Message page.')
     return render_template(
         'add_message.html',
@@ -378,6 +390,10 @@ def MapMessage(sequence: int, message: VideoMessage, image: Image) -> Message:
     result.timestamp = message.timestamp
     result.description = message.description
     result.youtube_id = message.youtube_id
+    result.speaker = f'{message.speaker.first_name} {message.speaker.last_name}'
+    result.speaker_is_guest = message.speaker.is_guest
+    result.speaker_icon_file_name = message.speaker.icon_file_name
+    result.is_published = message.is_published
     result.sequence = sequence
     
     if bool(image):
@@ -388,6 +404,11 @@ def MapMessage(sequence: int, message: VideoMessage, image: Image) -> Message:
 
 def GetImages():
     return [Image('storm.jpg', 'Storm'), Image('man-walking-with-bag.jpg', 'Walking Man'), Image('bible-on-rock.jpg', 'Bible')]
+
+def GetSpeakerList():
+    speakers = Speaker.query.order_by(Speaker.last_name.asc()).all()
+    speakerList = [(s.id, f'{s.first_name} {s.last_name}') for s in speakers]
+    return speakerList
 
 def GetMessages(count: int = 0, includeImages: bool = False):
     messages = []
