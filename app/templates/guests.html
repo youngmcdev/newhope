@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row p-1 nh-page-first-row rounded nh-page-first-row3" style="min-height:100px;">
+    <div class="col-12">
+        <h1 style="padding-top: 20px;;">Guest Preachers</h1>
+    </div>
+</div>
+<div id="viewer" class="row p-1" style="background: black; margin: 1px -10px 0px -10px;">
+    <div class="col-xl-1 col-xxl-2"></div>
+    <div class="col-xl-10 col-xxl-8">
+        <div class="nh-video-container rounded">
+            <iframe class="nh-video-element" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="col-xl-1 col-xxl-2"></div>
+</div>
+<div class="row" style="height:10px;"></div>
+<div class="row p-0 rounded">
+    <div class="p-0 col-xl-2 col-md-2 col-sm-3 col-4">
+        <div class="nh-face-icon"></div>
+    </div>
+    <div class="p-0 col-xl-4 col-md-5 col-sm-9 col-8">
+            Dr. Charles Hitibidal: June 2022
+            <ul>
+                <li><a class="nh-watch-btn" data-url="https://www.youtube.com/embed/Cah1tQwbgeY" href="#">12 June Session One</a></li>
+                <li><a class="nh-watch-btn" data-url="https://www.youtube.com/embed/6hB_vMgnfdY" href="#">12 June Session Two</a></li>
+                <li><a class="nh-watch-btn" data-url="https://www.youtube.com/embed/3tc8JuJFsNI" href="#">12 June Session Three</a></li>
+                <li><a class="nh-watch-btn" data-url="https://www.youtube.com/embed/qy3-vK56b0g" href="#">14 June Session</a></li>
+                <li><a class="nh-watch-btn" data-url="https://www.youtube.com/embed/mOgyQNCrMXM" href="#">15 June Session</a></li>
+            </ul>
+    </div>
+    <div class="p-1 col-xl-6 col-md-5 col-sm-12">
+        Learn more about Dr. Hitibidal at <a target="_blank" href="https://www.wttministries.com/">Walk Through Time Ministries</a> and <a target="_blank" href="https://www.prophecyinthespotlight.com/">Prophecy in the Spotlight</a>.
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        var $buttons = $('.nh-watch-btn');
+        var $viewerElement = $('#viewer');
+        var $iframe = $('.nh-video-element');
+        $viewerElement.hide();
+
+        $buttons.on('click', function(obj){
+            var $target = $(obj.target);
+            var $titleElement = $target.parent().siblings('h5');
+            var title = $titleElement.text();
+            var url = $target.data('url');
+            $iframe.attr('src', url);
+            $iframe.attr('title', title);
+            $viewerElement.show();
+        });
+    });
+</script>
+{% endblock %}

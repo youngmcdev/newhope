@@ -1,0 +1,15 @@
+#!/bin/bash
+# 
+if [ $# -lt 1 ]; then
+	# This will give you the changes in your current working directory compared to the index
+	git status > stat.dff
+	git diff --unified=10 --ignore-all-space >> stat.dff
+else
+	# Assuming the argument(s) are commit references...
+	# One argument: Changes between the commit and your current working directory. Use HEAD to compare the working directory to the repository.
+	# Two arguments: Changes between the two commits
+	git diff --name-status $@ > ./stat.dff
+	git diff --unified=10 --ignore-all-space $@ >> stat.dff
+fi
+# you will need to change this path for what ever text editor you use
+/c/usr/bin/Notepad++/notepad++.exe stat.dff &

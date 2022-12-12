@@ -8,27 +8,20 @@
 </div>
 <div class="row p-3 rounded">
     <div class="col-12">
-        <h4>Praesent elementum facilisis</h4>
-        <p>Quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus. Ac felis donec et odio pellentesque diam. Suscipit adipiscing bibendum est ultricies. Mi proin sed libero enim sed faucibus. Amet volutpat consequat mauris nunc congue nisi vitae. Erat velit scelerisque in dictum non consectetur a erat. Fermentum posuere urna nec tincidunt praesent semper feugiat nibh. Porttitor eget dolor morbi non arcu. Mus mauris vitae ultricies leo integer. Odio pellentesque diam volutpat commodo.</p>
-    </div>
-    <div class="col-md-6">
         <p>
-            Augue interdum velit euismod in. In nisl nisi scelerisque eu. Rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis. Libero id faucibus nisl tincidunt eget nullam non nisi est. Vitae tempus quam pellentesque nec nam aliquam. Accumsan tortor posuere ac ut consequat semper viverra nam. Tempor orci eu lobortis elementum nibh tellus molestie. Vitae congue eu consequat ac. 
+            <span class="nh-accent-text">Your donations help us to continue to serve as God directs. Our goal is to be great stewards of all with which He entrusts us. You can give online, through the mail, <b>or even better give in person</b>. We would be delighted to have you be a part of our services.</span>
+            <br /><em>Every man according as he purposeth in his heart, so let him give; not grudgingly, or of necessity: for God loveth a cheerful giver.</em> <span style="font-weight: 300;">(2 Corinthians 9:7)</span>
         </p>
     </div>
     <div class="col-md-6">
-        <h5>Checks payable to <em>New Hope Baptist Church</em> are also accepted</h5>
-        <p>Mail checks to the following address:</p>
+        <p>Checks payable to <em>New Hope Baptist Church</em> may be sent to the following address:</p>
         <p>
             New Hope Baptist Church<br />
             2011 Lincoln Rd.<br />Allegan, MI 49010
         </p>
         <p>Our financials are available to members at anytime</p>
     </div>
-</div>
-<div class="row p-3 rounded">
-    <div class="col-sm-2 col-lg-3"></div>
-    <div class="col-sm-8 col-lg-6">
+    <div class="col-md-6">
         <p id="give-section" style="color: #0d6efd; font-weight: 600;">Enter a <em>whole-dollar</em> amount and click <em>Give Now</em> to go to our secure processing page. By clicking <em>Give Now</em> you are <b>not</b> confirming a payment. You will have an opportunity to enter your payment method details and review your transaction.</p>
         <div class="input-group mb-3">
             <input id="amount" name="amount" type="number" class="form-control" placeholder="$0">
@@ -36,9 +29,9 @@
               <button class="btn btn-primary" id="give-button" name="give-button" type="button" disabled data-bs-toggle="modal" data-bs-target="#staticBackdrop">Give Now</button>
             </div>
         </div>
-        
     </div>
-    <div class="col-sm-2 col-lg-3"></div>
+</div>
+<div class="row p-3 rounded">
 </div>
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -50,8 +43,8 @@
         </div>
         <div id="modal-body" class="modal-body">&nbsp;</div>
         <div class="modal-footer">
-          <button id="modal-close-bth" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button id="modal-accept-btn" type="button" class="btn btn-primary">OK</button>
+          <button id="modal-close-btn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button id="modal-accept-btn" type="button" class="btn btn-primary"><span id="spinner" class="spinner-border spinner-border-sm" style="margin-right: 6px;"></span>OK</button>
         </div>
       </div>
     </div>
@@ -63,17 +56,21 @@
 <script>
     nhdata.configUrl = '{{ url_for("get_publishable_key") }}';
     nhdata.checkoutUrl = '{{ url_for("create_checkout_session") }}';
-
+    
     $(document).ready(function(){
         DonateCoModule.init();
         var giveButton = document.getElementById('give-button');
         var amountInput = document.getElementById('amount');
-        var modalButton = document.getElementById('modal-accept-btn');
+        var modalButtonConfirm = document.getElementById('modal-accept-btn');
         var modalBody = $('#modal-body');
         var modalTitle = $('#modal-title');
         
         giveButton.addEventListener('click', function(event){
-            var msg = `<p>Click <em>OK</em> to enter your payment method for <b>$${$(amountInput).val()}</b>. Click <em>Cancel</em> to enter a different amount.</p><p>In production this will take you to the processing page where you enter your payment method.</p>`;
+            var confirmButton = $(modalButtonConfirm);
+            confirmButton.attr('disabled', false);
+            confirmButton.find('#spinner').hide();
+            confirmButton.siblings('#modal-close-btn').attr('disabled', false);
+            var msg = `<p>Click <em>OK</em> to confirm the amount of <b>$${$(amountInput).val()}</b>. You will then be brought to the check-out page.<br \><br \>Click <em>Cancel</em> to enter a different amount.</p>`;
             modalBody.html(msg);
             modalTitle.text('Confirm');
         });
@@ -98,6 +95,8 @@
             amount = parseInt(amount) || '';
             amountTb.val((amount.toString().length > 0 ? amount + '.00' : ''));
         });
+
+        modalButtonConfirm.addEventListener('click', function(event){DonateCoModule.redirectToCheckout(event, amountInput, modalBody);});
     });
 </script>
 {% endblock %}

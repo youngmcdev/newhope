@@ -4,15 +4,17 @@ from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
 from flask import Flask
 from config import Config
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.from_object(Config)
+db = SQLAlchemy(app)
 
 if not app.debug:
     if not os.path.exists('logs'):
         os.mkdir('logs')
-    file_handler = RotatingFileHandler('logs/newhope_logger.log', maxBytes=10240,
-                                       backupCount=10)
+    file_handler = RotatingFileHandler('logs/newhope_logger.log', maxBytes=1048576,
+                                       backupCount=30)
     file_handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
     file_handler.setLevel(logging.INFO)
@@ -21,7 +23,7 @@ if not app.debug:
     app.logger.setLevel(logging.INFO)
     app.logger.info('New Hope startup')
 
-    msg = "Server:" + app.config['MAIL_SERVER'] + ", Password:" + app.config['MAIL_PASSWORD'] + ", Port:" + str(app.config['MAIL_PORT']) + ", User:" + app.config['MAIL_USERNAME'] + ", Sender:" + app.config['MAIL_SENDER']
+    msg = "Server:" + app.config['MAIL_SERVER'] + ", Port:" + str(app.config['MAIL_PORT']) + ", User:" + app.config['MAIL_USERNAME'] + ", Sender:" + app.config['MAIL_SENDER']
     app.logger.info(msg)
     if app.config['MAIL_SERVER']:
         auth = None

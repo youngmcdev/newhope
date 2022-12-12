@@ -3,8 +3,13 @@
 <div class="row p-3 rounded">
     <div class="col-12 nh-center" >
         <h1><i class="bi bi-check-circle" style="font-size: 2rem; color: rgb(38, 209, 38); padding-right:5px;"></i>Your transaction has completed</h1>
-        <p>Thank you, {{model.customerName}}, for your generous donation of {{model.donationAmount}} dollars to New Hope Baptist Church! It is very much appreciated. If you have any questions please contact us.</p>
-        <p><a href="{{ url_for('index') }}" class="btn btn-primary" style="width: 80px;">Home</a></p>
+        {% if model.donationAmount > 0 %}
+            <p>Thank you, {{model.customerName}}, for your generous donation of ${{model.donationAmount}}.00 to New Hope Baptist Church! It is very much appreciated. A receipt will be sent to {{model.customerEmail}}. If you have any questions please contact us.</p>
+            <p><a href="{{ url_for('index') }}" class="btn btn-primary" style="width: 80px;">Home</a></p>
+        {% else %}
+            <p>Thank you for your generous donation to New Hope Baptist Church! It is very much appreciated. A receipt will be sent to the email address you provided. If you have any questions please contact us.</p>
+        {% endif %}
+        
     </div>
 </div>
 {% endblock %}

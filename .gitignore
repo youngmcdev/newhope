@@ -1,5 +1,6 @@
 # Virtual environment
 venv/
+tmp/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -13,4 +14,6 @@ __pycache__/
 *.jpg
 *.log
 setenv.bat
+setenv.ps1
 grep.txt
+logs/
