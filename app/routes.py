@@ -69,6 +69,7 @@ class Message:
         self.youtube_id = ''
         self.timestamp = datetime.now(timezone.utc)
         self.is_published = False
+        self.speaker_id = 0
         self.speaker = ''
         self.speaker_is_guest = False
         self.speaker_icon_file_name = ''
@@ -379,6 +380,11 @@ def list_messages():
     pageModel.messages = GetMessages()
     return render_template('list_messages.html', model = pageModel)
 
+@app.route('/message-archive', methods=['GET'])
+def message_archive():
+    pageModel.messages = GetMessages()
+    return render_template('message_archive.html', model = pageModel)
+
 def calculate_order_amount(items):
     # Replace this constant with a calculation of the order's amount
     # Calculate the order total on the server to prevent
@@ -391,6 +397,7 @@ def MapMessage(sequence: int, message: VideoMessage, image: Image) -> Message:
     result.timestamp = message.timestamp
     result.description = message.description
     result.youtube_id = message.youtube_id
+    result.speaker_id = message.speaker_id
     result.speaker = f'{message.speaker.first_name} {message.speaker.last_name}'
     result.speaker_is_guest = message.speaker.is_guest
     result.speaker_icon_file_name = message.speaker.icon_file_name
@@ -430,7 +437,7 @@ def GetMessages(count: int = 0, includeImages: bool = False):
     for message in messageList:
         messages.append(MapMessage(
             index, 
-            message, 
+            message,
             None if index >= numOfImages else imageList[index])) # Add a default image?
         index = index + 1
 

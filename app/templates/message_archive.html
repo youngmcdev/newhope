@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row p-1">
+    <hr>
+    <div class="col-12" style="text-align: center;">
+        <h1>Message Archive</h1>
+        <span style="font-size: 1.4em">We continue to expand this with current and past messages.</span>
+    </div>
+    <hr>
+</div>
+<div id="viewer" class="row p-1" style="background: black; margin: 1px -10px 0px -10px;">
+    <div class="col-xl-1 col-xxl-2"></div>
+    <div class="col-xl-10 col-xxl-8">
+        <div class="nh-video-container rounded">
+            <iframe class="nh-video-element" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="col-xl-1 col-xxl-2"></div>
+</div>
+{% for message in model.messages %}
+<div class="row p-4 rounded" style="font-size:1.2em;">
+    <div class="p-0 col-xl-2 col-md-2 col-sm-3 col-4">
+        <div class="{{ message.speaker_icon_file_name }}" style="min-height:70px;"></div>
+    </div>
+    <div class="p-0 col-xl-4 col-md-5 col-sm-9 col-8">
+        {{ message.timestamp.strftime('%d %b %Y') }} <b>{{ message.speaker }}</b><br> <a class="nh-watch-btn" data-url="https://www.youtube.com/embed/{{ message.youtube_id }}" href="#">Watch now</a>
+    </div>
+    <div class="p-0 col-xl-6 col-md-5 col-sm-12">
+        {{message.title}} [<em style="font-weight:300;">{{ message.description }}</em>]
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        var $buttons = $('.nh-watch-btn');
+        var $viewerElement = $('#viewer');
+        var $iframe = $('.nh-video-element');
+        $viewerElement.hide();
+
+        $buttons.on('click', function(obj){
+            var $target = $(obj.target);
+            var $titleElement = $target.parent().siblings('h5');
+            var title = $titleElement.text();
+            var url = $target.data('url');
+            $iframe.attr('src', url);
+            $iframe.attr('title', title);
+            $viewerElement.show();
+        });
+    });
+</script>
+{% endblock %}
