@@ -320,6 +320,7 @@ def add_message():
 
     #app.logger.info(request.form)
     form = AddMessageForm(request.form)
+    form.speaker.choices = GetSpeakerList()
     #app.logger.info(f'value passed in {form.password.data}')
     if form.validate_on_submit() and AuthorizedToUpdate(form.password.data):
         # Add message
@@ -337,7 +338,7 @@ def add_message():
         
     # Get message data and return it
     # return render_template('login.html', title='Sign In', form=form, model = pageModel)
-    form.speaker.choices = GetSpeakerList()
+    
     app.logger.info('Go to Add Message page.')
     return render_template(
         'add_message.html',
