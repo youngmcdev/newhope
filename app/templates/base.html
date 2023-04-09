@@ -110,12 +110,27 @@
             border: 0;
         }
 
-        .nh-face-icon{
+        .nh-face-icon, .nh-dl-logo, .nh-ms-logo, .nh-jh-logo{
             min-height: 100px;
-            background-image: url('{{ url_for("static", filename="hiltibidal-02.png") }}');
             background-repeat: no-repeat;
             background-position: left;
             background-size: contain;
+        }
+
+        .nh-face-icon{
+            background-image: url('{{ url_for("static", filename="hiltibidal-02.png") }}');
+        }
+
+        .nh-dl-logo{
+            background-image: url('{{ url_for("static", filename="dl-logo.png") }}');
+        }
+
+        .nh-ms-logo{
+            background-image: url('{{ url_for("static", filename="ms-logo.png") }}');
+        }
+
+        .nh-jh-logo{
+            background-image: url('{{ url_for("static", filename="jh-logo.png") }}');
         }
 
         @media (min-width: 576px) {}
