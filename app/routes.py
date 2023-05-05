@@ -96,6 +96,7 @@ pageModel = PageTemplate('New Hope Baptist Church')
 @app.route('/')
 @app.route('/index')
 def index():
+    app.logger.info('index.html')
     return render_template('index.html', model = pageModel)
 
 @app.route('/give')
@@ -104,10 +105,12 @@ def give():
 
 @app.route('/events')
 def events():
+    app.logger.info('events.html')
     return render_template('events.html', model = pageModel)
 
 @app.route('/introduction')
 def introduction():
+    app.logger.info('introduction.html')
     return render_template('introduction.html', model = pageModel)
 
 @app.route('/messages')
@@ -121,19 +124,23 @@ def messages():
     # for message in messageList:
     #     pageModel.messages.append(MapMessage(index, message, imageList[index]))
     #     index = index + 1
+    app.logger.info('messages.html')
     pageModel.messages = GetMessages(3, True)
     return render_template('messages.html', model = pageModel)
 
 @app.route('/guests')
 def guests():
+    app.logger.info('guests.html')
     return render_template('guests.html', model = pageModel)
 
 @app.route('/live')
 def live():
+    app.logger.info('live.html')
     return render_template('live.html', model = pageModel)
 
 @app.route('/services')
 def services():
+    app.logger.info('services.html')
     return render_template('services.html', model = pageModel)
 
 @app.route('/login', methods = ['GET', 'POST'])
@@ -148,6 +155,7 @@ def login():
 
 @app.route('/donateco', methods = ['GET'])
 def donateco():
+    app.logger.info('donateco.html')
     return render_template('donateco.html', model = pageModel)
 
 @app.route("/donateco-config")
@@ -155,32 +163,37 @@ def get_publishable_key():
     stripeConfig = {"publicKey": stripeKeys["publishableKey"]}
     # MCY - fix this bug - seem to be referencing publicKey incorrectly
     # app.logger.info(f'Getting the publishable key {stripeConfig.publicKey}')
+    app.logger.info('donateco-config')
     return jsonify(stripeConfig)
 
 @app.route('/donatecu', methods = ['GET', 'POST'])
 def donatecu():
+    app.logger.info('donatecu.html')
     form = DonateForm
     return render_template('donatecu.html', form = form, model = pageModel)
 
 @app.route('/donate', methods = ['GET', 'POST'])
 def donate():
     # this route does not actually 'checkout'
+    app.logger.info('donate.html')
     form = DonateForm
     return render_template('donate.html', form = form, model = pageModel)
 
 @app.route('/create-checkout-session', methods = ['POST'])
 def create_checkout_session():
+    baseMessage = 'create-checkout-session:'
     try:
         dollarAmount = math.floor(float(request.form['amount']))
         amount = dollarAmount * 100
-        app.logger.info('create-checkout-session AmountPosted:' + str(amount))
+        app.logger.info(f'{baseMessage} AmountPosted:' + str(amount))
         stripe.api_key = stripeKeys["secretKey"]
         # This is set in the Stripe dashboard. However, we can override that here
         stripe.api_version = '2020-08-27'
         successUrl = url_for('checkout_success', _external = True) + "?session_id={CHECKOUT_SESSION_ID}"
         cancelUrl = url_for('checkout_cancel', _external = True)
-        app.logger.info(f'SuccessUrl:{successUrl}')
-        app.logger.info(f'CancelUrl:{cancelUrl}')
+        app.logger.info(f'{baseMessage} SuccessUrl:{successUrl}')
+        app.logger.info(f'{baseMessage} CancelUrl:{cancelUrl}')
+        app.logger.error('This is NOT an error. A checkout session has been requested for donation.')
 
         session = stripe.checkout.Session.create(
             payment_method_types = ['card'],
@@ -205,32 +218,33 @@ def create_checkout_session():
             success_url = successUrl,
             cancel_url = cancelUrl
         )
-        app.logger.info(f'Session Object: {session}')
+        app.logger.info(f'{baseMessage} Session Object: {session}')
 
         sessionId = ''
         if(session):
-            app.logger.info(f'session ID {session.id}')
+            app.logger.info(f'{baseMessage} session ID {session.id}')
             sessionId = session.id
         return jsonify(id = sessionId)
     except Exception as e:
-        app.logger.error('An exception was thrown creating a stripe checkout sesson. ' + str(e))
+        app.logger.error(f'{baseMessage} An exception was thrown creating a stripe checkout sesson. ' + str(e))
         return jsonify(error=str(e)), 403
 
 @app.route('/checkout-success')
 def checkout_success():
+    baseMessage = 'checkout-success:'
     successModel = PageTemplate('Thank you!')
     sessionIdFromStripeSession = request.args.get('session_id')
-    app.logger.info(f'Session ID from URL: "{sessionIdFromStripeSession}"')
+    app.logger.info(f'{baseMessage} Session ID from URL: "{sessionIdFromStripeSession}"')
     if(sessionIdFromStripeSession and sessionIdFromStripeSession.strip()):
-        app.logger.info(f'Attempt to get a session from Stripe for the session ID.')
+        app.logger.info(f'{baseMessage} Attempt to get a session from Stripe for the session ID.')
         try:
             session = stripe.checkout.Session.retrieve(sessionIdFromStripeSession)
-            app.logger.info(f'Session object: {session}')
-            app.logger.info(f'Attempt to get a customer object from Stripe for CustomerId:"{session.customer}"')
+            app.logger.info(f'{baseMessage} Session object: {session}')
+            app.logger.info(f'{baseMessage} Attempt to get a customer object from Stripe for CustomerId:"{session.customer}"')
             customer = stripe.Customer.retrieve(session.customer)
-            app.logger.info(f'Customer object: {customer}')
+            app.logger.info(f'{baseMessage} Customer object: {customer}')
         except:
-            app.logger.info('An error occured with the Stripe API. We could not retrieve the customer information after the successful payment processing. Returning default data to the view.')
+            app.logger.info(f'{baseMessage} An error occured with the Stripe API. We could not retrieve the customer information after the successful payment processing. Returning default data to the view.')
             session = MockStripeSession()
             customer = session.customer
         
@@ -239,17 +253,22 @@ def checkout_success():
             successModel.customerName = customer.name or customer.email or ''
 
         successModel.donationAmount = int(session.amount_total/100)
+        app.logger.error('This is NOT an error. A checkout session has been completed for donation.')
 
     return render_template('success.html', model = successModel)
 
 @app.route('/checkout-cancel')
 def checkout_cancel():
+    app.logger.info('checkout-cancel: A checkout was cancelled.')
+    app.logger.error('This is NOT an error. A checkout session has been canceled for donation.')
     return render_template('cancel.html', model = pageModel)
 
 @app.route('/create-payment-intent', methods=['POST'])
 def create_payment():
+    baseMessage = 'create-payment-intent:'
+    app.logger.error('This is NOT an error. A payment intent has been requested for donation.')
     try:
-        app.logger.info('In create-payment-intent')
+        app.logger.info(f'{baseMessage} Begin creating payment intent')
         app.logger.info(request.data)
         data = json.loads(request.data)
         app.logger.info(data)
@@ -258,27 +277,30 @@ def create_payment():
             amount=calculate_order_amount(data['items']),
             currency='usd'
         )
+        app.logger.info(f'{baseMessage} End creating payment intent')
         # Return the PaymentIntent's client secret in the response to finish the payment on the client.
         return jsonify({
             'clientSecret': intent['client_secret']
         })
+        
     except Exception as e:
-        app.logger.error('An exception was thrown creating a stripe payment intent. ' + str(e))
+        app.logger.error(f'{baseMessage} An exception was thrown creating a stripe payment intent. ' + str(e))
         return jsonify(error=str(e)), 403
 
 @app.route('/update-message', methods=['GET','POST'])
 def update_message():
+    baseMessage = 'update-message:'
     form = AddMessageForm(request.form)
     form.speaker.choices = GetSpeakerList()
 
     if form.validate_on_submit() and AuthorizedToUpdate(form.password.data):
         messageId = int(form.id.data)
-        app.logger.info(f'Form validated. Message ID: {messageId}')
+        app.logger.info(f'{baseMessage} Form validated. Message ID: {messageId}')
         message = VideoMessage.query.filter_by(id = messageId).first()
         if bool(message):
-            app.logger.info(f'Update message: {message}')
+            app.logger.info(f'{baseMessage} Update message: {message}')
             dateToStore = GetDateToStore(form.date.data, form.is_am_service.data == 'am')
-            app.logger.info(f'Message date: {dateToStore}')
+            app.logger.info(f'{baseMessage} Message date: {dateToStore}')
             message.title = form.title.data
             message.description = form.description.data
             message.timestamp = dateToStore
@@ -287,17 +309,17 @@ def update_message():
             message.speaker_id = int(form.speaker.data)
             db.session.commit()
         else:
-            app.logger.info('Could not find the message to update.')
+            app.logger.info(f'{baseMessage} Could not find the message to update.')
 
         return redirect(url_for('list_messages'))
     else:
-        app.logger.info(f'The form did not validate. FormMethod:{request.method}')
+        app.logger.info(f'{baseMessage} The form did not validate. FormMethod:{request.method}')
 
     if request.method == 'GET':
         messageId = int(request.args['id'])
-        app.logger.info(f'Message ID: {messageId}')
+        app.logger.info(f'{baseMessage} Message ID: {messageId}')
         message = VideoMessage.query.filter_by(id = messageId).first()
-        app.logger.info(f'Display message: {message}')
+        app.logger.info(f'{baseMessage} Display message: {message}')
         if bool(message):
             form.id.data = messageId
             form.is_am_service.data = 'am' if message.timestamp.hour == 14 or message.timestamp.hour == 15 else 'pm'
@@ -316,8 +338,9 @@ def update_message():
 
 @app.route('/add-message', methods=['GET', 'POST'])
 def add_message():
+    baseMessage = 'add-message:'
     if request.method != 'POST':
-        app.logger.info(f'This is not a POST: {request.method}')
+        app.logger.info(f'{baseMessage} This is not a POST: {request.method}')
 
     #app.logger.info(request.form)
     form = AddMessageForm(request.form)
@@ -325,22 +348,22 @@ def add_message():
     #app.logger.info(f'value passed in {form.password.data}')
     if form.validate_on_submit() and AuthorizedToUpdate(form.password.data):
         # Add message
-        app.logger.info('This is a POST and the form was validated.')
+        app.logger.info(f'{baseMessage} This is a POST and the form was validated.')
         dateToStore = GetDateToStore(form.date.data, form.is_am_service.data == 'am')
         isPublished = True if form.is_published.data == '1' else False
-        app.logger.info(f'Message date: {dateToStore}')
+        app.logger.info(f'{baseMessage} Message date: {dateToStore}')
         messageToStore = VideoMessage(title=form.title.data, description=form.description.data, youtube_id=form.youtube_id.data, timestamp=dateToStore, speaker_id=int(form.speaker.data), is_published=isPublished)
         app.logger.info(messageToStore)
         db.session.add(messageToStore)
         db.session.commit()
         return redirect(url_for('list_messages'))
     else:
-        app.logger.info(f'The form did not validate. FormMethod:{request.method}')
+        app.logger.info(f'{baseMessage} The form did not validate. FormMethod:{request.method}')
         
     # Get message data and return it
     # return render_template('login.html', title='Sign In', form=form, model = pageModel)
     
-    app.logger.info('Go to Add Message page.')
+    app.logger.info(f'{baseMessage} Go to Add Message page.')
     return render_template(
         'add_message.html',
         model = pageModel,
@@ -360,19 +383,20 @@ def AuthorizedToUpdate(password: str) -> bool:
 
 @app.route('/delete-message', methods=['GET'])
 def delete_message():
+    baseMessage = 'delete-message:'
     password = request.args['confNum']
     if not AuthorizedToUpdate(password):
-        app.logger.info('Not authorized to delete the message.')
+        app.logger.info(f'{baseMessage} Not authorized to delete the message.')
     else:
         youtubeId = request.args["id"]
-        app.logger.info(f'Delete message: {youtubeId}')
+        app.logger.info(f'{baseMessage} Delete message: {youtubeId}')
         message = VideoMessage.query.filter_by(youtube_id = youtubeId).first()
         if bool(message):
-            app.logger.info('Deleting message')
+            app.logger.info(f'{baseMessage} Deleting message')
             db.session.delete(message)
             db.session.commit()
         else:
-            app.logger.info('Could not find the message to delete.')
+            app.logger.info(f'{baseMessage} Could not find the message to delete.')
     return redirect(url_for('list_messages'))
 
 @app.route('/list-messages', methods=['GET'])
@@ -382,6 +406,7 @@ def list_messages():
 
 @app.route('/message-archive', methods=['GET'])
 def message_archive():
+    app.logger.info('message_archive.html')
     pageModel.messages = GetMessages()
     return render_template('message_archive.html', model = pageModel)
 

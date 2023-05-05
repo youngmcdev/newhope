@@ -6,7 +6,6 @@ var DonateCoModule = (function () {
             .then(nhdata.fetchStatus)
             .then(nhdata.fetchJson)
             .then(function(data){
-                console.log({ConfigData:data});
                 stripe = Stripe(data.publicKey);
             })
             .catch(function(error){
@@ -29,7 +28,6 @@ var DonateCoModule = (function () {
             .then(nhdata.fetchStatus)
             .then(nhdata.fetchJson)
             .then(function(data){
-                console.log({CheckoutData:data});
                 if(stripe){
                     return stripe.redirectToCheckout({sessionId: data.id});
                 }
