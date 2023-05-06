@@ -196,7 +196,7 @@ def create_checkout_session():
         app.logger.error('This is NOT an error. A checkout session has been requested for donation.')
 
         session = stripe.checkout.Session.create(
-            payment_method_types = ['card'],
+            #payment_method_types = ['card'],
             submit_type = 'donate',
             line_items = [{
                 'price_data': {
@@ -215,6 +215,7 @@ def create_checkout_session():
                 'quantity': 1
             }],
             mode = 'payment',
+            customer_creation = 'if_required',
             success_url = successUrl,
             cancel_url = cancelUrl
         )
