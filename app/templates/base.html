@@ -110,7 +110,7 @@
             border: 0;
         }
 
-        .nh-face-icon, .nh-dl-logo, .nh-ms-logo, .nh-jh-logo{
+        .nh-face-icon, .nh-dl-logo, .nh-ms-logo, .nh-jh-logo, .nh-sy-logo, .nh-tb-logo, .nh-lb-logo{
             min-height: 100px;
             background-repeat: no-repeat;
             background-position: left;
@@ -131,6 +131,18 @@
 
         .nh-jh-logo{
             background-image: url('{{ url_for("static", filename="jh-logo.png") }}');
+        }
+
+        .nh-sy-logo{
+            background-image: url('{{ url_for("static", filename="sy-logo.png") }}');
+        }
+
+        .nh-tb-logo{
+            background-image: url('{{ url_for("static", filename="tb-logo.png") }}');
+        }
+
+        .nh-lb-logo{
+            background-image: url('{{ url_for("static", filename="lb-logo.png") }}');
         }
 
         @media (min-width: 576px) {}
@@ -224,7 +236,7 @@
                         </svg>
                     </a>
                 </p>
-                <p style="text-align:center;white-space:pre-wrap;">Contact Us: 269.673.1938 | info@nhbcallegan.com<br>©2022 New Hope Baptist Church. All rights reserved.
+                <p style="text-align:center;white-space:pre-wrap;">Contact Us: 269.673.1938 | info@nhbcallegan.com<br>©2023 New Hope Baptist Church. All rights reserved.
                 </p>
             </div>
     </footer>
@@ -232,7 +244,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <!-- JavaScript Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
-
 
 <script>
     var nhdata = {
